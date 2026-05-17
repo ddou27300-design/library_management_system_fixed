@@ -1,0 +1,60 @@
+/* ============================================================
+   Library Management System — Dashboard Specific Styles
+   ============================================================ */
+
+/* Canvas chart container */
+#borrowChart { max-height: 280px; }
+
+/* Category bar chart */
+.category-bar { display: flex; flex-direction: column; gap: 10px; }
+.category-row { display: flex; align-items: center; gap: 10px; }
+.category-name { width: 130px; font-size: 12.5px; color: var(--text-muted, #64748b); flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.category-prog { flex: 1; background: #f1f5f9; border-radius: 999px; height: 8px; overflow: hidden; }
+.category-prog-bar { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2563eb, #7c3aed); transition: width .6s ease; }
+.category-count { font-size: 12.5px; font-weight: 600; color: #2563eb; width: 30px; text-align: right; }
+
+/* Donut placeholder */
+.donut-container { display: flex; justify-content: center; }
+
+/* Welcome greeting banner */
+.welcome-banner {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  border-radius: 12px;
+  padding: 20px 24px;
+  color: #fff;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.welcome-banner h2 { font-size: 20px; font-weight: 700; }
+.welcome-banner p  { opacity: .8; font-size: 13px; margin-top: 4px; }
+.welcome-icon { font-size: 40px; opacity: .5; }
+
+/* Quick action buttons */
+.quick-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 20px;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text, #1e293b);
+  flex: 1;
+  min-width: 120px;
+  transition: all .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.quick-action-btn:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37,99,235,.12);
+}
+.quick-action-btn i { font-size: 22px; }
+.quick-action-btn span { font-size: 12.5px; font-weight: 600; }

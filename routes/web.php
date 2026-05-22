@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TranslateController;
 use Illuminate\Support\Facades\Route;
 
 // Root redirect
@@ -22,6 +23,13 @@ Route::middleware(['web'])->group(function () {
         }
         return redirect()->back();
     })->name('lang.switch');
+});
+
+// AI Translation API routes (accessible when authenticated)
+Route::middleware(['auth'])->group(function () {
+    Route::post('/translate/english',     [TranslateController::class, 'english'])->name('translate.english');
+    Route::post('/translate/khmer',       [TranslateController::class, 'khmer'])->name('translate.khmer');
+    Route::post('/translate/clear-cache', [TranslateController::class, 'clearCache'])->name('translate.clear-cache');
 });
 
 // Auth routes (guests only)
@@ -47,14 +55,17 @@ Route::middleware('auth')->group(function () {
     // Students - full CRUD
     Route::resource('students', StudentController::class);
 
-    // Borrow & Return
+    // Borrow & Return (កែសម្រួលបន្ថែមមុខងារ destroy រួចរាល់)
     Route::prefix('borrows')->name('borrows.')->group(function () {
-        Route::get('/',               [BorrowController::class, 'index'])->name('index');
-        Route::get('/create',         [BorrowController::class, 'create'])->name('create');
-        Route::post('/',              [BorrowController::class, 'store'])->name('store');
-        Route::get('/{borrow}',       [BorrowController::class, 'show'])->name('show');
-        Route::get('/{borrow}/return', [BorrowController::class, 'returnForm'])->name('return.form');
+        Route::get('/',                 [BorrowController::class, 'index'])->name('index');
+        Route::get('/create',           [BorrowController::class, 'create'])->name('create');
+        Route::post('/',                [BorrowController::class, 'store'])->name('store');
+        Route::get('/{borrow}',         [BorrowController::class, 'show'])->name('show');
+        Route::get('/{borrow}/return',  [BorrowController::class, 'returnForm'])->name('return.form');
         Route::post('/{borrow}/return', [BorrowController::class, 'processReturn'])->name('return');
+        
+        // 🟢 បន្ថែមមុខងារ Delete (លុប) ដើម្បីដោះស្រាយ Error 500
+        Route::delete('/{borrow}',      [BorrowController::class, 'destroy'])->name('destroy');
     });
 
     // Reports
@@ -68,6 +79,7 @@ Route::middleware('auth')->group(function () {
     // Staff management (admin only)
     Route::middleware('can:admin')->group(function () {
         Route::resource('staff', StaffController::class)->except(['show']);
+        
         // Keep legacy /register route working for backward compatibility
         Route::get('/register',  [AuthController::class, 'showRegister'])->name('register');
         Route::post('/register', [AuthController::class, 'register'])->name('register.post');

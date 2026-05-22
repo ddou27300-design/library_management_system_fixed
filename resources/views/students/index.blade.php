@@ -15,21 +15,22 @@
     <div class="filter-bar">
         <form method="GET" action="{{ route('students.index') }}" class="filter-form">
             <input type="text" name="search" value="{{ request('search') }}"
-                   placeholder="Search name, ID, email..." class="form-control search-input">
+                   placeholder="Search name, ID, email..." 
+                   data-i18n-placeholder="search_placeholder" 
+                   class="form-control search-input">
 
             <select name="status" class="form-control">
-                <option value="">All Status</option>
-                <option value="active"    {{ request('status') === 'active'    ? 'selected' : '' }}>Active</option>
-                <option value="inactive"  {{ request('status') === 'inactive'  ? 'selected' : '' }}>Inactive</option>
-                <option value="suspended" {{ request('status') === 'suspended' ? 'selected' : '' }}>Suspended</option>
+                <option value="" data-i18n="all_status">All Status</option>
+                <option value="active" data-i18n="status_active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                <option value="inactive" data-i18n="status_inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                <option value="suspended" data-i18n="status_suspended" {{ request('status') === 'suspended' ? 'selected' : '' }}>Suspended</option>
             </select>
 
             @if($majors->isNotEmpty())
             <select name="major" class="form-control">
-                <option value="">All Majors</option>
+                <option value="" data-i18n="all_majors">All Majors</option>
                 @foreach($majors as $major)
-                    <option value="{{ $major }}" {{ request('major') === $major ? 'selected' : '' }}>
-                        {{ $major }}
+                    <option value="{{ $major }}">{{ $major }}
                     </option>
                 @endforeach
             </select>
@@ -48,12 +49,12 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Student ID</th>
-                    <th>Name</th>
-                    <th>Class / Major</th>
-                    <th>Contact</th>
-                    <th>Borrowing</th>
-                    <th>Status</th>
+                    <th data-i18n="student_id">STUDENT ID</th>
+                    <th data-i18n="name">Name</th>
+                    <th data-i18n="class_major">Class / Major</th>
+                    <th data-i18n="contact">Contact</th>
+                    <th data-i18n="borrowing">Borrowing</th>
+                    <th data-i18n="status">Status</th>
                     <th>{{ __('menu.book_actions') }}</th>
                 </tr>
             </thead>
@@ -80,9 +81,11 @@
                         </td>
                         <td>
                             @if($student->active_borrows_count > 0)
-                                <span class="badge badge-warning">{{ $student->active_borrows_count }} active</span>
+                                <span class="badge badge-warning">
+                                    {{ $student->active_borrows_count }} <span data-i18n="active">active</span>
+                                </span>
                             @else
-                                <span class="text-muted">None</span>
+                                <span class="text-muted" data-i18n="none">None</span>
                             @endif
                         </td>
                         <td>
@@ -94,7 +97,9 @@
                                     default     => 'badge-default'
                                 };
                             @endphp
-                            <span class="badge {{ $statusClass }}">{{ ucfirst($student->status) }}</span>
+                            <span class="badge {{ $statusClass }}" data-i18n="status_{{ $student->status }}">
+                                {{ ucfirst($student->status) }}
+                            </span>
                         </td>
                         <td>
                             <div class="action-buttons">
@@ -119,7 +124,8 @@
                     <tr>
                         <td colspan="7" class="text-center text-muted" style="padding:40px">
                             <i class="fas fa-user-graduate" style="font-size:2rem;opacity:.3;display:block;margin-bottom:10px"></i>
-                            No students found. <a href="{{ route('students.create') }}">Register one</a>.
+                            <span data-i18n="no_students">No students found.</span> 
+                            <a href="{{ route('students.create') }}" data-i18n="register_one">Register one</a>.
                         </td>
                     </tr>
                 @endforelse

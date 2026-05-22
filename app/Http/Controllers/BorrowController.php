@@ -14,7 +14,7 @@ class BorrowController extends Controller
 {
     public function index(Request $request)
     {
-        // Sync overdue statuses
+        // ធ្វើបច្ចុប្បន្នភាពស្ថានភាពហួសកាលកំណត់ (Sync overdue statuses)
         Borrow::where('status', 'borrowed')
                ->where('due_date', '<', now()->toDateString())
                ->update(['status' => 'overdue']);
@@ -95,14 +95,18 @@ class BorrowController extends Controller
             ->with('success', '"' . $book->title . '" issued successfully.');
     }
 
-    public function show(Borrow $borrow)
+    // 🛠️ កែសម្រួល៖ ប្តូរពី (Borrow $borrow) ទៅទទួលយក $id ចំៗ ការពារការវង្វេង Key ជាមួយ Student
+    public function show($id)
     {
-        $borrow->load(['student', 'book.category', 'issuedBy', 'returnedTo']);
+        $borrow = Borrow::with(['student', 'book.category', 'issuedBy', 'returnedTo'])->findOrFail($id);
         return view('borrow.show', compact('borrow'));
     }
 
-    public function returnForm(Borrow $borrow)
+    // 🛠️ កែសម្រួល៖ ប្តូរទៅទទួលយក $id ចំៗ ការពារបញ្ហា Route គាំង
+    public function returnForm($id)
     {
+        $borrow = Borrow::findOrFail($id);
+        
         if (in_array($borrow->status, ['returned', 'lost'])) {
             return redirect()->route('borrows.index')
                 ->with('info', 'This record is already closed.');
@@ -111,8 +115,11 @@ class BorrowController extends Controller
         return view('borrow.return', compact('borrow'));
     }
 
-    public function processReturn(Request $request, Borrow $borrow)
+    // 🛠️ ករណីដំណើរការត្រឡប់សៀវភៅ
+    public function processReturn(Request $request, $id)
     {
+        $borrow = Borrow::findOrFail($id);
+
         if (in_array($borrow->status, ['returned', 'lost'])) {
             return back()->with('error', 'This record is already closed.');
         }
@@ -153,5 +160,29 @@ class BorrowController extends Controller
         if ($fine > 0) $msg .= ' Fine: $' . number_format($fine, 2);
 
         return redirect()->route('borrows.index')->with('success', $msg);
+    }
+
+    /**
+     * 🟢 បន្ថែមថ្មី៖ មុខងារលុបទិន្នន័យ (Destroy Method)
+     * មុខងារនេះនឹងលុបកត់ត្រាខ្ចី ហើយបើវាជាសៀវភៅដែលមិនទាន់សង វានឹងបូកចំនួនសៀវភៅចូលក្នុងឃ្លាំងវិញ
+     */
+    public function destroy($id)
+    {
+        $borrow = Borrow::findOrFail($id);
+
+        DB::transaction(function () use ($borrow) {
+            // ប្រសិនបើលុបកត់ត្រាដែលកំពុងខ្ចី (មិនទាន់សង) ត្រូវឱ្យសៀវភៅនោះចូលឃ្លាំងវិញ
+            if (in_array($borrow->status, ['borrowed', 'overdue'])) {
+                if ($borrow->book) {
+                    $borrow->book->increment('available_copies');
+                }
+            }
+            
+            // ធ្វើការលុបចេញពី Database
+            $borrow->delete();
+        });
+
+        return redirect()->route('borrows.index')
+            ->with('success', 'Borrowing record deleted successfully.');
     }
 }

@@ -13,6 +13,9 @@ class Borrow extends Model
     const FINE_PER_DAY = 0.25;
     const LOAN_DAYS    = 14;
 
+    // ប្រាប់ Laravel ថា Primary Key របស់តារាងនេះគឺ id
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'borrow_code', 'student_id', 'book_id',
         'borrow_date', 'due_date', 'return_date',
@@ -37,14 +40,15 @@ class Borrow extends Model
         });
     }
 
+    // កែសម្រួលការភ្ជាប់ទំនាក់ទំនង (Relationship) ឱ្យត្រូវជាមួយ Student ID (String) ក្នុង Database របស់លោកអ្នក
     public function student()
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsTo(Student::class, 'student_id', 'student_id');
     }
 
     public function book()
     {
-        return $this->belongsTo(Book::class);
+        return $this->belongsTo(Book::class, 'book_id', 'id');
     }
 
     public function issuedBy()
@@ -59,12 +63,21 @@ class Borrow extends Model
 
     public function isOverdue(): bool
     {
+        // បន្ថែមការពិនិត្យការពារ ប្រសិនបើ due_date ជា null មិនឱ្យគាំង
+        if (!$this->due_date) {
+            return false;
+        }
+        
         return in_array($this->status, ['borrowed', 'overdue'])
             && $this->due_date->isPast();
     }
 
     public function calculateFine(): float
     {
+        if (!$this->due_date) {
+            return 0;
+        }
+
         $checkDate = $this->return_date ?? Carbon::today();
         if ($checkDate->lte($this->due_date)) {
             return 0;
@@ -74,7 +87,9 @@ class Borrow extends Model
 
     public function getDaysRemainingAttribute(): int
     {
-        if (in_array($this->status, ['returned', 'lost'])) return 0;
+        if (!$this->due_date || in_array($this->status, ['returned', 'lost'])) {
+            return 0;
+        }
         return (int) Carbon::today()->diffInDays($this->due_date, false);
     }
 

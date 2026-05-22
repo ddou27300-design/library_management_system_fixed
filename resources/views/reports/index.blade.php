@@ -37,53 +37,53 @@
 <div class="report-nav">
     <a href="{{ route('reports.index') }}" class="report-nav-card" style="border-color:var(--primary,#1a3c5e);background:var(--primary,#1a3c5e);color:#fff;">
         <i class="fas fa-chart-bar"></i>
-        <span>Overview</span>
+        <span data-i18n="overview">Overview</span>
     </a>
     <a href="{{ route('reports.overdue') }}" class="report-nav-card">
         <i class="fas fa-exclamation-triangle" style="color:#dc2626"></i>
-        <span>Overdue Books</span>
+        <span data-i18n="overdue_books_title">Overdue Books</span>
     </a>
     <a href="{{ route('reports.fines') }}" class="report-nav-card">
         <i class="fas fa-dollar-sign" style="color:#d97706"></i>
-        <span>Fines</span>
+        <span data-i18n="fines_title">Fines</span>
     </a>
     <a href="{{ route('reports.popular') }}" class="report-nav-card">
         <i class="fas fa-fire" style="color:#ea580c"></i>
-        <span>Popular Books</span>
+        <span data-i18n="popular_title">Popular Books</span>
     </a>
 </div>
 
 {{-- Summary Cards --}}
 <div class="summary-grid">
     <div class="sum-card">
-        <div class="sum-label">Total Borrows</div>
+        <div class="sum-label" data-i18n="total_borrows">Total Borrows</div>
         <div class="sum-val" style="color:#2563eb">{{ number_format($summary['total_borrows']) }}</div>
-        <div class="sum-sub">All time</div>
+        <div class="sum-sub" data-i18n="all_time">All time</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label">Active Borrows</div>
+        <div class="sum-label" data-i18n="active_borrows_lbl">Active Borrows</div>
         <div class="sum-val" style="color:#16a34a">{{ number_format($summary['active_borrows']) }}</div>
-        <div class="sum-sub">Currently out</div>
+        <div class="sum-sub" data-i18n="currently_out2">Currently out</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label">Overdue</div>
+        <div class="sum-label" data-i18n="overdue_lbl">Overdue</div>
         <div class="sum-val" style="color:#dc2626">{{ number_format($summary['overdue_count']) }}</div>
-        <div class="sum-sub">Needs attention</div>
+        <div class="sum-sub" data-i18n="needs_attention2">Needs attention</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label">Total Fines</div>
+        <div class="sum-label" data-i18n="total_fines">Total Fines</div>
         <div class="sum-val" style="color:#d97706">${{ number_format($summary['total_fines'], 2) }}</div>
-        <div class="sum-sub">Collected: ${{ number_format($summary['fines_collected'], 2) }}</div>
+        <div class="sum-sub"><span data-i18n="collected">Collected</span>: ${{ number_format($summary['fines_collected'], 2) }}</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label">Total Books</div>
+        <div class="sum-label" data-i18n="total_books_lbl">Total Books</div>
         <div class="sum-val" style="color:#7c3aed">{{ number_format($summary['total_books']) }}</div>
-        <div class="sum-sub">In catalog</div>
+        <div class="sum-sub" data-i18n="in_catalog">In catalog</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label">Students</div>
+        <div class="sum-label" data-i18n="students_lbl">Students</div>
         <div class="sum-val" style="color:#0891b2">{{ number_format($summary['total_students']) }}</div>
-        <div class="sum-sub">Registered</div>
+        <div class="sum-sub" data-i18n="registered">Registered</div>
     </div>
 </div>
 
@@ -91,20 +91,23 @@
 <div class="charts-row">
     {{-- Monthly Chart --}}
     <div class="chart-card">
-        <h4><i class="fas fa-chart-line" style="color:#2563eb"></i> Monthly Borrow Activity ({{ now()->year }})</h4>
+        <h4>
+            <i class="fas fa-chart-line" style="color:#2563eb"></i> 
+            <span data-i18n="monthly_activity">Monthly Borrow Activity</span> ({{ now()->year }})
+        </h4>
         <canvas id="monthlyChart" height="100"></canvas>
     </div>
 
     {{-- Category Stats --}}
     <div class="chart-card">
-        <h4><i class="fas fa-tags" style="color:#7c3aed"></i> Borrows by Category</h4>
+        <h4><i class="fas fa-tags" style="color:#7c3aed"></i> <span data-i18n="borrows_by_category">Borrows by Category</span></h4>
         @php $maxBorrows = $categoryStats->max('borrows') ?: 1; @endphp
         <table class="cat-table">
             <thead>
                 <tr>
-                    <th>Category</th>
-                    <th style="text-align:right">Books</th>
-                    <th style="text-align:right">Borrows</th>
+                    <th data-i18n="category">Category</th>
+                    <th style="text-align:right" data-i18n="books">Books</th>
+                    <th style="text-align:right" data-i18n="times_borrowed">Borrows</th>
                 </tr>
             </thead>
             <tbody>
@@ -118,7 +121,7 @@
                     <td style="text-align:right;font-weight:600">{{ $cat['borrows'] }}</td>
                 </tr>
                 @empty
-                <tr><td colspan="3" class="text-center text-muted" style="padding:20px">No data</td></tr>
+                <tr><td colspan="3" class="text-center text-muted" style="padding:20px" data-i18n="no_data">No data</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -127,15 +130,15 @@
 
 {{-- Monthly Table --}}
 <div class="chart-card">
-    <h4><i class="fas fa-table" style="color:#16a34a"></i> Monthly Summary Table — {{ now()->year }}</h4>
+    <h4><i class="fas fa-table" style="color:#16a34a"></i> <span data-i18n="monthly_summary">Monthly Summary Table</span> — {{ now()->year }}</h4>
     <div style="overflow-x:auto">
         <table class="cat-table">
             <thead>
                 <tr>
-                    <th>Month</th>
-                    <th style="text-align:right">Borrowed</th>
-                    <th style="text-align:right">Returned</th>
-                    <th style="text-align:right">Fines Collected</th>
+                    <th data-i18n="month">Month</th>
+                    <th style="text-align:right" data-i18n="status_borrowed">Borrowed</th>
+                    <th style="text-align:right" data-i18n="status_returned">Returned</th>
+                    <th style="text-align:right" data-i18n="collected">Fines Collected</th>
                 </tr>
             </thead>
             <tbody>

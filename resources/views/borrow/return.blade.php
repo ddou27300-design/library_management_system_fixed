@@ -11,45 +11,70 @@
         </a>
     </div>
     <div class="card-body">
-        <!-- Borrow Summary -->
-        <div class="borrow-summary {{ $borrow->isOverdue() ? 'borrow-summary-danger' : 'borrow-summary-info' }}">
+        @php
+            $isOverdueRecord = $borrow->status === 'overdue' || ($borrow->due_date && \Carbon\Carbon::parse($borrow->due_date)->isPast());
+        @endphp
+        
+        {{-- 🎨 កែសម្រួល៖ រក្សាទុកលក្ខខណ្ឌ Class ដើមរបស់លោកអ្នក --}}
+        <div class="borrow-summary {{ $isOverdueRecord ? 'borrow-summary-danger' : 'borrow-summary-info' }}">
             <div class="summary-row">
                 <span class="summary-label">Borrow Code</span>
                 <span class="text-mono">{{ $borrow->borrow_code }}</span>
             </div>
+            
             <div class="summary-row">
                 <span class="summary-label">Student</span>
-                <span><strong>{{ $borrow->student->name }}</strong> ({{ $borrow->student->student_id }})</span>
+                <span>
+                    @if($borrow->student)
+                        <strong>{{ $borrow->student->name }}</strong> ({{ $borrow->student->student_id }})
+                    @else
+                        <span class="text-danger font-bold">
+                            <i class="fas fa-exclamation-triangle"></i> Student Account Deleted
+                        </span>
+                    @endif
+                </span>
             </div>
+            
             <div class="summary-row">
                 <span class="summary-label">Book</span>
-                <span><strong>{{ $borrow->book->title }}</strong> by {{ $borrow->book->author }}</span>
+                <span>
+                    @if($borrow->book)
+                        <strong>{{ $borrow->book->title }}</strong> by {{ $borrow->book->author }}
+                    @else
+                        <span class="text-danger font-bold">
+                            <i class="fas fa-exclamation-triangle"></i> Book Deleted
+                        </span>
+                    @endif
+                </span>
             </div>
+            
             <div class="summary-row">
                 <span class="summary-label">Borrowed</span>
-                <span>{{ $borrow->borrow_date->format('d M Y') }}</span>
+                <span>{{ $borrow->borrow_date ? \Carbon\Carbon::parse($borrow->borrow_date)->format('d M Y') : '—' }}</span>
             </div>
             <div class="summary-row">
                 <span class="summary-label">Due Date</span>
-                <span class="{{ $borrow->isOverdue() ? 'text-danger font-bold' : '' }}">
-                    {{ $borrow->due_date->format('d M Y') }}
-                    @if($borrow->isOverdue())
+                <span class="{{ $isOverdueRecord ? 'text-danger font-bold' : '' }}">
+                    {{ $borrow->due_date ? \Carbon\Carbon::parse($borrow->due_date)->format('d M Y') : '—' }}
+                    @if($isOverdueRecord)
+                        {{-- 🎨 កែសម្រួល៖ ប្រើ class badge-danger (លំនាំដើមរបស់អ្នក) ការពារការបាត់ Style --}}
                         <span class="badge badge-danger">{{ now()->diffInDays($borrow->due_date) }} days overdue</span>
                     @endif
                 </span>
             </div>
         </div>
 
-        <form action="{{ route('borrows.return', $borrow) }}" method="POST" id="returnForm">
+        <form action="{{ route('borrows.return', $borrow->id) }}" method="POST" id="returnForm">
             @csrf
 
+            {{-- 🎨 កែសម្រួល៖ ប្រើប្រាស់តែ <div class="form-row"> សុទ្ធ ដោយមិនបាច់ថែម row ឬ mb-3 នាំឱ្យជល់ CSS ដើម --}}
             <div class="form-row">
                 <div class="form-group col-4">
                     <label for="return_date">Return Date <span class="required">*</span></label>
                     <input type="date" id="return_date" name="return_date"
                            class="form-control"
                            value="{{ old('return_date', today()->toDateString()) }}"
-                           min="{{ $borrow->borrow_date->toDateString() }}"
+                           min="{{ $borrow->borrow_date ? \Carbon\Carbon::parse($borrow->borrow_date)->toDateString() : today()->toDateString() }}"
                            max="{{ today()->toDateString() }}"
                            onchange="calculateFine()" required>
                 </div>
@@ -63,6 +88,7 @@
                 </div>
                 <div class="form-group col-4">
                     <label>Estimated Fine</label>
+                    {{-- 🎨 កែសម្រួល៖ បង្វិលមកប្រើ Class fine-display ដើមរបស់អ្នកវិញ --}}
                     <div class="fine-display" id="fineDisplay">$0.00</div>
                     <small class="text-muted">Fine rate: ${{ number_format(\App\Models\Borrow::FINE_PER_DAY, 2) }}/day</small>
                 </div>
@@ -87,11 +113,15 @@
 
 @push('scripts')
 <script>
-const dueDate    = new Date('{{ $borrow->due_date->toDateString() }}');
-const finePerDay = {{ \App\Models\Borrow::FINE_PER_DAY }};
+const dueDateString = '{{ $borrow->due_date ? \Carbon\Carbon::parse($borrow->due_date)->toDateString() : today()->toDateString() }}';
+const dueDate       = new Date(dueDateString);
+const finePerDay    = {{ \App\Models\Borrow::FINE_PER_DAY }};
 
 function calculateFine() {
-    const returnDate  = new Date(document.getElementById('return_date').value);
+    const returnDateInput = document.getElementById('return_date').value;
+    if (!returnDateInput) return;
+
+    const returnDate  = new Date(returnDateInput);
     const condition   = document.getElementById('condition').value;
     let fine = 0;
 
@@ -104,6 +134,8 @@ function calculateFine() {
 
     const display = document.getElementById('fineDisplay');
     display.textContent = '$' + fine.toFixed(2);
+    
+    // 🎨 កែសម្រួល៖ ប្រើប្រាស់ឈ្មោះ Class dynamic ដូចកូដចាស់របស់អ្នក (fine-amount-red និង fine-amount-zero)
     display.className = 'fine-display ' + (fine > 0 ? 'fine-amount-red' : 'fine-amount-zero');
 }
 

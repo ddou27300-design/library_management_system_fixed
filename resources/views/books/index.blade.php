@@ -11,7 +11,6 @@
         </a>
     </div>
 
-    <!-- Filters -->
     <div class="filter-bar">
         <form method="GET" action="{{ route('books.index') }}" class="filter-form">
             <input
@@ -23,11 +22,13 @@
             >
             <select name="category" class="form-control">
                 <option value="">All Categories</option>
-                @foreach($categories as $cat)
-                    <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
-                        {{ $cat->name }}
-                    </option>
-                @endforeach
+                @isset($categories)
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
+                            {{ $cat->name }}
+                        </option>
+                    @endforeach
+                @endisset
             </select>
             <select name="status" class="form-control">
                 <option value="">All Status</option>
@@ -40,26 +41,41 @@
     </div>
 
     <div class="card-body p-0">
-        <table class="table table-hover">
+        <table class="table table-hover table-striped mb-0 align-middle">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th style="width: 50px;">#</th>
+                    <th style="width: 80px;">Cover</th>
                     <th>Title</th>
                     <th>Author</th>
                     <th>Category</th>
                     <th>ISBN</th>
-                    <th>Copies</th>
-                    <th>Available</th>
+                    <th class="text-center">Copies</th>
+                    <th class="text-center">Available</th>
                     <th>Status</th>
-                    <th>Actions</th>
+                    <th class="text-end" style="padding-right: 20px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($books as $index => $book)
                     <tr>
                         <td>{{ $books->firstItem() + $index }}</td>
+                        
                         <td>
-                            <a href="{{ route('books.show', $book) }}" class="text-primary font-semibold">
+                            @if($book->cover_image)
+                                <img src="{{ asset('storage/' . $book->cover_image) }}" 
+                                     alt="{{ $book->title }}" 
+                                     style="width: 45px; height: 60px; object-fit: cover; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.15);">
+                            @else
+                                <div style="width: 45px; height: 60px; background-color: #f3f4f6; border: 1px dashed #d1d5db; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-direction: column; color: #9ca3af; font-size: 9px; font-weight: bold; line-height: 1;">
+                                    <span>NO</span>
+                                    <span>COVER</span>
+                                </div>
+                            @endif
+                        </td>
+
+                        <td>
+                            <a href="{{ route('books.show', $book->id) }}" class="text-primary font-semibold text-decoration-none">
                                 {{ $book->title }}
                             </a>
                             @if($book->published_year)
@@ -67,30 +83,44 @@
                             @endif
                         </td>
                         <td>{{ $book->author }}</td>
-                        <td><span class="badge badge-info">{{ $book->category->name }}</span></td>
+                        
+                        {{-- ផ្នែកកែសម្រួល៖ បន្ថែមការការពារ Null-safety ទៅលើ Category --}}
+                        <td>
+                            @if($book->category)
+                                <span class="badge bg-info text-dark">{{ $book->category->name }}</span>
+                            @else
+                                <span class="badge bg-secondary">Uncategorized</span>
+                            @endif
+                        </td>
+
                         <td class="text-mono">{{ $book->isbn ?? '—' }}</td>
                         <td class="text-center">{{ $book->total_copies }}</td>
                         <td class="text-center">
-                            <span class="{{ $book->available_copies > 0 ? 'text-success font-bold' : 'text-danger font-bold' }}">
-                                {{ $book->available_copies }}
+                            <span class="{{ ($book->available_copies ?? 0) > 0 ? 'text-success fw-bold' : 'text-danger fw-bold' }}">
+                                {{ $book->available_copies ?? 0 }}
                             </span>
                         </td>
                         <td>
-                            <span class="badge badge-{{ $book->isAvailable() ? 'success' : 'danger' }}">
-                                {{ $book->isAvailable() ? 'Available' : 'Unavailable' }}
+                            {{-- ការពារករណីមិនមាន method isAvailable() ក្នុង Model ដោយប្រើលក្ខខណ្ឌជំនួស --}}
+                            @php
+                                $isAvailable = method_exists($book, 'isAvailable') ? $book->isAvailable() : (($book->status === 'available') && ($book->available_copies > 0));
+                            @endphp
+                            <span class="badge bg-{{ $isAvailable ? 'success' : 'danger' }}">
+                                {{ $isAvailable ? 'Available' : 'Unavailable' }}
                             </span>
                         </td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="{{ route('books.show', $book) }}" class="btn btn-sm btn-info" title="View">
+                        <td class="text-end" style="padding-right: 20px;">
+                            <div class="action-buttons d-flex gap-1 justify-content-end">
+                                <a href="{{ route('books.show', $book->id) }}" class="btn btn-sm btn-info" title="View">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('books.edit', $book) }}" class="btn btn-sm btn-warning" title="Edit">
+                                <a href="{{ route('books.edit', $book->id) }}" class="btn btn-sm btn-warning" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('books.destroy', $book) }}" method="POST" class="inline"
+                                <form action="{{ route('books.destroy', $book->id) }}" method="POST" class="d-inline"
                                       onsubmit="return confirm('Delete this book?')">
-                                    @csrf @method('DELETE')
+                                    @csrf 
+                                    @method('DELETE')
                                     <button class="btn btn-sm btn-danger" title="Delete">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -100,9 +130,10 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="text-center text-muted py-4">
-                            <i class="fas fa-book fa-2x mb-2"></i><br>
-                            No books found. <a href="{{ route('books.create') }}">Add the first book</a>.
+                        <td colspan="10" class="text-center text-muted py-5">
+                            <i class="fas fa-book fa-3x mb-3 text-secondary"></i><br>
+                            <h5>No books found</h5>
+                            <p class="text-sm">Try tweaking your search filters or <a href="{{ route('books.create') }}" class="text-primary">add a new book record</a>.</p>
                         </td>
                     </tr>
                 @endforelse
@@ -110,11 +141,13 @@
         </table>
     </div>
 
-    <div class="card-footer">
-        <div class="pagination-info">
-            Showing {{ $books->firstItem() }}–{{ $books->lastItem() }} of {{ $books->total() }} books
+    <div class="card-footer d-flex justify-content-between align-items-center">
+        <div class="pagination-info text-muted small">
+            Showing {{ method_exists($books, 'firstItem') ? ($books->firstItem() ?? 0) : 1 }}–{{ method_exists($books, 'lastItem') ? ($books->lastItem() ?? 0) : 1 }} of {{ method_exists($books, 'total') ? $books->total() : count($books) }} books
         </div>
-        {{ $books->links() }}
+        <div>
+            {{ method_exists($books, 'links') ? $books->links() : '' }}
+        </div>
     </div>
 </div>
 @endsection

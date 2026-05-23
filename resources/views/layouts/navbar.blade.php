@@ -3,13 +3,13 @@
     <a href="{{ route('lang.switch', 'en') }}" 
        style="text-decoration: none; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease; 
               {{ app()->getLocale() == 'en' ? 'background: #2563eb; color: #ffffff; box-shadow: 0 2px 5px rgba(37,99,235,0.25);' : 'color: #64748b;' }}">
-       ENGLISH
+       {{ __('menu.english') }}
     </a>
 
     <a href="{{ route('lang.switch', 'kh') }}" 
        style="text-decoration: none; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease; 
               {{ app()->getLocale() == 'kh' ? 'background: #2563eb; color: #ffffff; box-shadow: 0 2px 5px rgba(37,99,235,0.25);' : 'color: #64748b;' }}">
-       KHMER
+        {{ __('menu.khmer') }}
     </a>
 
 </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Fines Report')
-@section('page-title', 'Fines Report')
+@section('title', __('menu.fines_title'))
+@section('page-title', __('menu.fines_title'))
 
 @push('styles')
 <style>
@@ -21,7 +21,7 @@
 
 <div style="margin-bottom:16px">
     <a href="{{ route('reports.index') }}" class="btn btn-outline-secondary btn-sm">
-        <i class="fas fa-arrow-left"></i> Back to Reports
+        <i class="fas fa-arrow-left"></i> {{ __('menu.back_to_reports') }}
     </a>
 </div>
 
@@ -29,25 +29,25 @@
 <div class="fine-total-banner">
     <i class="fas fa-dollar-sign"></i>
     <div>
-        <div class="lbl">Total Fines (all time)</div>
+        <div class="lbl">{{ __('menu.total_fines_all') }}</div>
         <div class="amt">${{ number_format($totalFines, 2) }}</div>
     </div>
 </div>
 
 <div class="card">
     <div class="card-header">
-        <h3><i class="fas fa-dollar-sign" style="color:#d97706"></i> Fine Records</h3>
+        <h3><i class="fas fa-dollar-sign" style="color:#d97706"></i> {{ __('menu.fine_records') }}</h3>
     </div>
 
     {{-- Date filter --}}
     <div class="filter-bar">
         <form method="GET" action="{{ route('reports.fines') }}" class="filter-form">
-            <label style="font-size:.85rem;font-weight:600;color:var(--text-muted)">From:</label>
+            <label style="font-size:.85rem;font-weight:600;color:var(--text-muted)">{{ __('menu.from') }}</label>
             <input type="date" name="from_date" value="{{ request('from_date') }}" class="form-control">
-            <label style="font-size:.85rem;font-weight:600;color:var(--text-muted)">To:</label>
+            <label style="font-size:.85rem;font-weight:600;color:var(--text-muted)">{{ __('menu.to') }}</label>
             <input type="date" name="to_date" value="{{ request('to_date') }}" class="form-control">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
-            <a href="{{ route('reports.fines') }}" class="btn btn-outline-secondary">Reset</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> {{ __('menu.filter') }}</button>
+            <a href="{{ route('reports.fines') }}" class="btn btn-outline-secondary">{{ __('menu.reset') }}</a>
         </form>
     </div>
 
@@ -55,14 +55,14 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Borrow Code</th>
-                    <th>Student</th>
-                    <th>Book</th>
-                    <th>Due Date</th>
-                    <th>Return Date</th>
-                    <th>Fine Amount</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>{{ __('menu.borrow_code') }}</th>
+                    <th>{{ __('menu.student') }}</th>
+                    <th>{{ __('menu.book_title') }}</th>
+                    <th>{{ __('menu.due_date') }}</th>
+                    <th>{{ __('menu.return_date') }}</th>
+                    <th>{{ __('menu.fine') }}</th>
+                    <th>{{ __('menu.status') }}</th>
+                    <th>{{ __('menu.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -80,9 +80,9 @@
                     <td style="font-weight:700;color:#d97706">${{ number_format($borrow->fine_amount, 2) }}</td>
                     <td>
                         @if($borrow->status === 'returned')
-                            <span class="badge badge-paid">Paid / Returned</span>
+                            <span class="badge badge-paid">{{ __('menu.paid_returned') }}</span>
                         @else
-                            <span class="badge badge-unpaid">Unpaid</span>
+                            <span class="badge badge-unpaid">{{ __('menu.unpaid') }}</span>
                         @endif
                     </td>
                     <td>
@@ -91,7 +91,7 @@
                         </a>
                         @if(in_array($borrow->status, ['borrowed','overdue']))
                             <a href="{{ route('borrows.return.form', $borrow) }}" class="btn btn-sm btn-success">
-                                <i class="fas fa-undo"></i> Return
+                                <i class="fas fa-undo"></i> {{ __('menu.return') }}
                             </a>
                         @endif
                     </td>
@@ -100,7 +100,7 @@
                 <tr>
                     <td colspan="8" class="text-center text-muted" style="padding:40px">
                         <i class="fas fa-dollar-sign" style="font-size:2rem;opacity:.2;display:block;margin-bottom:8px"></i>
-                        No fine records found for the selected period.
+                        {{ __('menu.no_fine_records') }}
                     </td>
                 </tr>
                 @endforelse
@@ -110,7 +110,7 @@
 
     <div class="card-footer">
         <div class="pagination-info">
-            Showing {{ $borrows->firstItem() ?? 0 }}–{{ $borrows->lastItem() ?? 0 }} of {{ $borrows->total() }} records
+            {{ __('menu.showing_results', ['from' => $borrows->firstItem() ?? 0, 'to' => $borrows->lastItem() ?? 0, 'total' => $borrows->total()]) }}
         </div>
         {{ $borrows->links() }}
     </div>

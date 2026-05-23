@@ -1,13 +1,13 @@
 @extends('layouts.app')
-@section('title', 'Return Book')
-@section('page-title', 'Process Book Return')
+@section('title', __('menu.return_book_title'))
+@section('page-title', __('menu.process_return'))
 
 @section('content')
 <div class="card form-card">
     <div class="card-header">
-        <h3><i class="fas fa-undo"></i> Return Book</h3>
+        <h3><i class="fas fa-undo"></i> {{ __('menu.return_book') }}</h3>
         <a href="{{ route('borrows.index') }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Back
+            <i class="fas fa-arrow-left"></i> {{ __('menu.back') }}
         </a>
     </div>
     <div class="card-body">
@@ -18,47 +18,47 @@
         {{-- 🎨 កែសម្រួល៖ រក្សាទុកលក្ខខណ្ឌ Class ដើមរបស់លោកអ្នក --}}
         <div class="borrow-summary {{ $isOverdueRecord ? 'borrow-summary-danger' : 'borrow-summary-info' }}">
             <div class="summary-row">
-                <span class="summary-label">Borrow Code</span>
+                <span class="summary-label">{{ __('menu.borrow_code') }}</span>
                 <span class="text-mono">{{ $borrow->borrow_code }}</span>
             </div>
             
             <div class="summary-row">
-                <span class="summary-label">Student</span>
+                <span class="summary-label">{{ __('menu.student') }}</span>
                 <span>
                     @if($borrow->student)
                         <strong>{{ $borrow->student->name }}</strong> ({{ $borrow->student->student_id }})
                     @else
                         <span class="text-danger font-bold">
-                            <i class="fas fa-exclamation-triangle"></i> Student Account Deleted
+                            <i class="fas fa-exclamation-triangle"></i> {{ __('menu.student_deleted') }}
                         </span>
                     @endif
                 </span>
             </div>
             
             <div class="summary-row">
-                <span class="summary-label">Book</span>
+                <span class="summary-label">{{ __('menu.book_info_borrow') }}</span>
                 <span>
                     @if($borrow->book)
-                        <strong>{{ $borrow->book->title }}</strong> by {{ $borrow->book->author }}
+                        <strong>{{ $borrow->book->title }}</strong> {{ __('menu.by_author') }} {{ $borrow->book->author }}
                     @else
                         <span class="text-danger font-bold">
-                            <i class="fas fa-exclamation-triangle"></i> Book Deleted
+                            <i class="fas fa-exclamation-triangle"></i> {{ __('menu.book_deleted') }}
                         </span>
                     @endif
                 </span>
             </div>
             
             <div class="summary-row">
-                <span class="summary-label">Borrowed</span>
+                <span class="summary-label">{{ __('menu.borrow_date') }}</span>
                 <span>{{ $borrow->borrow_date ? \Carbon\Carbon::parse($borrow->borrow_date)->format('d M Y') : '—' }}</span>
             </div>
             <div class="summary-row">
-                <span class="summary-label">Due Date</span>
+                <span class="summary-label">{{ __('menu.due_date') }}</span>
                 <span class="{{ $isOverdueRecord ? 'text-danger font-bold' : '' }}">
                     {{ $borrow->due_date ? \Carbon\Carbon::parse($borrow->due_date)->format('d M Y') : '—' }}
                     @if($isOverdueRecord)
                         {{-- 🎨 កែសម្រួល៖ ប្រើ class badge-danger (លំនាំដើមរបស់អ្នក) ការពារការបាត់ Style --}}
-                        <span class="badge badge-danger">{{ now()->diffInDays($borrow->due_date) }} days overdue</span>
+                        <span class="badge badge-danger">{{ now()->diffInDays($borrow->due_date) }} {{ __('menu.overdue_day_s') }}</span>
                     @endif
                 </span>
             </div>
@@ -70,7 +70,7 @@
             {{-- 🎨 កែសម្រួល៖ ប្រើប្រាស់តែ <div class="form-row"> សុទ្ធ ដោយមិនបាច់ថែម row ឬ mb-3 នាំឱ្យជល់ CSS ដើម --}}
             <div class="form-row">
                 <div class="form-group col-4">
-                    <label for="return_date">Return Date <span class="required">*</span></label>
+                    <label for="return_date">{{ __('menu.return_date') }} <span class="required">*</span></label>
                     <input type="date" id="return_date" name="return_date"
                            class="form-control"
                            value="{{ old('return_date', today()->toDateString()) }}"
@@ -79,32 +79,32 @@
                            onchange="calculateFine()" required>
                 </div>
                 <div class="form-group col-4">
-                    <label for="condition">Book Condition <span class="required">*</span></label>
+                    <label for="condition">{{ __('menu.book_condition') }} <span class="required">*</span></label>
                     <select id="condition" name="condition" class="form-control" onchange="calculateFine()">
-                        <option value="good">Good</option>
-                        <option value="damaged">Damaged</option>
-                        <option value="lost">Lost</option>
+                        <option value="good">{{ __('menu.condition_good') }}</option>
+                        <option value="damaged">{{ __('menu.condition_damaged') }}</option>
+                        <option value="lost">{{ __('menu.condition_lost') }}</option>
                     </select>
                 </div>
                 <div class="form-group col-4">
-                    <label>Estimated Fine</label>
+                    <label>{{ __('menu.estimated_fine') }}</label>
                     {{-- 🎨 កែសម្រួល៖ បង្វិលមកប្រើ Class fine-display ដើមរបស់អ្នកវិញ --}}
                     <div class="fine-display" id="fineDisplay">$0.00</div>
-                    <small class="text-muted">Fine rate: ${{ number_format(\App\Models\Borrow::FINE_PER_DAY, 2) }}/day</small>
+                    <small class="text-muted">{{ __('menu.fine_rate', ['rate' => number_format(\App\Models\Borrow::FINE_PER_DAY, 2)]) }}</small>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="notes">Notes</label>
+                <label for="notes">{{ __('menu.notes') }}</label>
                 <textarea id="notes" name="notes" class="form-control" rows="2"
-                          placeholder="Condition notes, remarks...">{{ old('notes') }}</textarea>
+                          placeholder="{{ __('menu.notes_placeholder') }}">{{ old('notes') }}</textarea>
             </div>
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-success">
-                    <i class="fas fa-check"></i> Confirm Return
+                    <i class="fas fa-check"></i> {{ __('menu.confirm_return') }}
                 </button>
-                <a href="{{ route('borrows.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                <a href="{{ route('borrows.index') }}" class="btn btn-outline-secondary">{{ __('menu.cancel') }}</a>
             </div>
         </form>
     </div>

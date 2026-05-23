@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') — Library MS</title>
+    <title>@yield('title', __('menu.dashboard')) — {{ __('menu.library_ms') }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@400;700&family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -50,30 +50,9 @@
             color: #fff !important;
             box-shadow: 0 2px 8px rgba(26,60,94,.25);
         }
-        .lang-btn:disabled { opacity: .65; cursor: not-allowed; }
 
-        .lang-spinner {
-            display: inline-block; width: 11px; height: 11px;
-            border: 2px solid rgba(255,255,255,.35);
-            border-top-color: currentColor;
-            border-radius: 50%;
-            animation: lspin .6s linear infinite;
-        }
-        @keyframes lspin { to { transform: rotate(360deg); } }
 
-        #translate-toast {
-            position: fixed; bottom: 24px; right: 24px;
-            background: #1a3c5e; color: #fff;
-            padding: 11px 18px; border-radius: 10px;
-            font-size: .85rem; font-weight: 600;
-            display: flex; align-items: center; gap: 10px;
-            z-index: 9999; opacity: 0; transform: translateY(8px);
-            transition: all .3s ease; pointer-events: none;
-            max-width: 320px;
-        }
-        #translate-toast.show    { opacity: 1; transform: translateY(0); }
-        #translate-toast.error   { background: #dc2626; }
-        #translate-toast.success { background: #16a34a; }
+
 
         .nav-section-label {
             font-size: .68rem; font-weight: 700; letter-spacing: 1px;
@@ -85,17 +64,11 @@
 </head>
 <body class="{{ app()->getLocale() === 'kh' ? 'lang-kh' : 'lang-en' }}" id="app-body">
 
-{{-- Toast notification --}}
-<div id="translate-toast">
-    <span class="lang-spinner" id="toast-spinner"></span>
-    <span id="translate-toast-msg">Translating…</span>
-</div>
-
 {{-- ===== SIDEBAR ===== --}}
 <aside class="sidebar" id="sidebar">
     <a href="{{ route('dashboard') }}" class="sidebar-brand">
         <i class="fas fa-book-open"></i>
-        <span>Library MS</span>
+        <span>{{ __('menu.library_ms') }}</span>
     </a>
 
     <nav class="sidebar-nav">
@@ -177,7 +150,7 @@
             <i class="fas fa-user-circle"></i>
             <div>
                 <div style="color:#e2e8f0;font-size:13px;font-weight:600;">{{ Auth::user()->name }}</div>
-                <div style="font-size:11px;color:#64748b;text-transform:capitalize;">{{ Auth::user()->role }}</div>
+                <div style="font-size:11px;color:#64748b;text-transform:capitalize;">{{ __('menu.role_' . Auth::user()->role) }}</div>
             </div>
         </div>
     </div>
@@ -194,23 +167,21 @@
         <h1 class="page-title">@yield('page-title', __('menu.dashboard'))</h1>
 
         <div class="topbar-right">
-            <span class="topbar-date">
+                <span class="topbar-date">
                 <i class="fas fa-calendar-alt"></i>
-                {{ now()->format('D, d M Y') }}
+                {{ now()->format('d/m/Y') }}
             </span>
 
-            {{-- AI Language Switcher --}}
-            <div class="lang-switcher" title="AI-powered language switcher">
-                <button id="btn-lang-en"
-                        class="lang-btn {{ app()->getLocale() !== 'kh' ? 'active' : '' }}"
-                        onclick="switchLanguage('en')">
+            {{-- Language Switcher --}}
+            <div class="lang-switcher">
+                <a href="{{ route('lang.switch', 'en') }}"
+                   class="lang-btn {{ app()->getLocale() !== 'kh' ? 'active' : '' }}">
                     ENGLISH
-                </button>
-                <button id="btn-lang-kh"
-                        class="lang-btn {{ app()->getLocale() === 'kh' ? 'active' : '' }}"
-                        onclick="switchLanguage('kh')">
+                </a>
+                <a href="{{ route('lang.switch', 'kh') }}"
+                   class="lang-btn {{ app()->getLocale() === 'kh' ? 'active' : '' }}">
                     ខ្មែរ
-                </button>
+                </a>
             </div>
 
             @if(Auth::user()->isAdmin())
@@ -247,7 +218,7 @@
     </main>
 
     <footer class="page-footer">
-        <p>&copy; {{ date('Y') }} Library Management System. All rights reserved.</p>
+        <p>{{ __('menu.footer_copyright', ['year' => date('Y')]) }}</p>
     </footer>
 </div>
 
@@ -256,139 +227,7 @@
 <script src="{{ asset('js/dashboard.js') }}"></script>
 <script src="{{ asset('js/validation.js') }}"></script>
 
-<script>
-/* ================================================================
-   AI Live Translation System — powered by Gemini API
-   Switches all [data-i18n] elements without reloading the page.
-================================================================ */
-(function () {
-    const CSRF = document.querySelector('meta[name="csrf-token"]').content;
 
-    // --- Session cache helpers ---
-    const cache = {
-        get: (locale) => { try { return JSON.parse(sessionStorage.getItem('lms_t_' + locale)); } catch { return null; } },
-        set: (locale, data) => { try { sessionStorage.setItem('lms_t_' + locale, JSON.stringify(data)); } catch {} },
-    };
-
-    // --- Toast helpers ---
-    const toast = document.getElementById('translate-toast');
-    const toastMsg = document.getElementById('translate-toast-msg');
-    const toastSpinner = document.getElementById('toast-spinner');
-    let toastTimer = null;
-
-    function showToast(msg, type) {
-        clearTimeout(toastTimer);
-        toast.className = 'show' + (type && type !== 'loading' ? ' ' + type : '');
-        toastMsg.textContent = msg;
-        toastSpinner.style.display = (type === 'loading') ? 'inline-block' : 'none';
-        if (type !== 'loading') {
-            toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 3000);
-        }
-    }
-
-    // --- Apply translations to DOM ---
-    function applyTranslations(translations, locale) {
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (translations[key] !== undefined) {
-                el.textContent = translations[key];
-            }
-        });
-        const body = document.getElementById('app-body');
-        body.className = body.className.replace(/\blang-\w+/g, '').trim() + ' lang-' + locale;
-        document.getElementById('html-root').lang = (locale === 'kh') ? 'km' : 'en';
-
-        const btnEn = document.getElementById('btn-lang-en');
-        const btnKh = document.getElementById('btn-lang-kh');
-        btnEn.classList.toggle('active', locale === 'en');
-        btnKh.classList.toggle('active', locale === 'kh');
-    }
-
-    // --- Set button loading state ---
-    function setLoading(locale, loading) {
-        const btn = document.getElementById(locale === 'kh' ? 'btn-lang-kh' : 'btn-lang-en');
-        const other = document.getElementById(locale === 'kh' ? 'btn-lang-en' : 'btn-lang-kh');
-        if (loading) {
-            btn.innerHTML = '<span class="lang-spinner"></span> Translating…';
-            btn.disabled = true;
-            other.disabled = true;
-        } else {
-            btn.innerHTML = locale === 'kh' ? 'ខ្មែរ' : 'ENGLISH';
-            btn.disabled = false;
-            other.disabled = false;
-        }
-    }
-
-    // --- Main switch function (exposed globally) ---
-    window.switchLanguage = async function (locale) {
-        const activeBtn = document.querySelector('.lang-btn.active');
-        const currentLocale = activeBtn ? (activeBtn.id === 'btn-lang-en' ? 'en' : 'kh') : 'en';
-        if (locale === currentLocale) return;
-
-        /* =========================================================================
-           COMMENTED OUT FOR DEVELOPMENT:
-           លុបចោលការទាញ Cache ចេញ ដើម្បីបង្ខំឱ្យវាហៅ API ទាញយកពាក្យថ្មីៗជានិច្ចពេលកូដ Blade ប្រែប្រួល
-           =========================================================================
-        const cached = cache.get(locale);
-        if (cached) {
-            applyTranslations(cached, locale);
-            showToast(locale === 'kh' ? '✓ ប្ដូរទៅភាសាខ្មែរ' : '✓ Switched to English', 'success');
-            fetch('/translate/' + (locale === 'kh' ? 'khmer' : 'english'), {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' }
-            }).catch(() => {});
-            return;
-        }
-        ========================================================================= */
-
-        // Fetch from server (calls Gemini API)
-        setLoading(locale, true);
-        showToast(
-            locale === 'kh' ? 'Gemini AI is translating to Khmer…' : 'Switching to English…',
-            'loading'
-        );
-
-        try {
-            const endpoint = '/translate/' + (locale === 'kh' ? 'khmer' : 'english');
-            const res = await fetch(endpoint, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': CSRF,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-            });
-
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                throw new Error(err.message || 'HTTP ' + res.status);
-            }
-
-            const data = await res.json();
-            cache.set(locale, data.translations);
-            applyTranslations(data.translations, locale);
-            showToast(
-                locale === 'kh' ? '✓ បានបកប្រែដោយ Gemini AI' : '✓ Switched to English',
-                'success'
-            );
-        } catch (err) {
-            console.error('[Translation]', err);
-            showToast('Translation failed: ' + err.message, 'error');
-        } finally {
-            setLoading(locale, false);
-        }
-    };
-
-    // Re-apply cached translation on page load (if locale was already kh)
-    document.addEventListener('DOMContentLoaded', () => {
-        const serverLocale = document.getElementById('app-body').classList.contains('lang-kh') ? 'kh' : 'en';
-        if (serverLocale === 'kh') {
-            const cached = cache.get('kh');
-            if (cached) applyTranslations(cached, 'kh');
-        }
-    });
-})();
-</script>
 
 @stack('scripts')
 </body>

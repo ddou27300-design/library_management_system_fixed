@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Categories')
+@section('title', __('menu.categories'))
 @section('page-title', __('menu.categories'))
 
 @section('content')
@@ -17,8 +17,8 @@
                 <tr>
                     <th>#</th>
                     <th>{{ __('menu.book_category') }}</th>
-                    <th>Description</th>
-                    <th>Books</th>
+                    <th>{{ __('menu.description') }}</th>
+                    <th>{{ __('menu.books') }}</th>
                     <th>{{ __('menu.book_actions') }}</th>
                 </tr>
             </thead>
@@ -32,7 +32,7 @@
                         </td>
                         <td class="text-muted">{{ $category->description ?? '—' }}</td>
                         <td>
-                            <span class="badge badge-info">{{ $category->books_count }} books</span>
+                            <span class="badge badge-info">{{ __('menu.books_count', ['count' => $category->books_count]) }}</span>
                         </td>
                         <td>
                             <div class="action-buttons">
@@ -40,7 +40,7 @@
                                     <i class="fas fa-edit"></i> {{ __('menu.edit') }}
                                 </a>
                                 <form action="{{ route('categories.destroy', $category) }}" method="POST" style="display:inline"
-                                      onsubmit="return confirm('Delete this category?')">
+                                      onsubmit="return confirm('{{ __('menu.delete_record_confirm') }}')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         <i class="fas fa-trash"></i>
@@ -53,7 +53,7 @@
                     <tr>
                         <td colspan="5" class="text-center text-muted" style="padding:40px">
                             <i class="fas fa-tags" style="font-size:2rem;opacity:.3;display:block;margin-bottom:10px"></i>
-                            No categories yet. <a href="{{ route('categories.create') }}">Add the first one</a>.
+                            {{ __('menu.no_categories') }} <a href="{{ route('categories.create') }}">{{ __('menu.add_first_category') }}</a>.
                         </td>
                     </tr>
                 @endforelse
@@ -63,8 +63,7 @@
 
     <div class="card-footer">
         <div class="pagination-info">
-            Showing {{ $categories->firstItem() ?? 0 }}–{{ $categories->lastItem() ?? 0 }}
-            of {{ $categories->total() }} categories
+            {{ __('menu.showing_results', ['from' => $categories->firstItem() ?? 0, 'to' => $categories->lastItem() ?? 0, 'total' => $categories->total()]) }}
         </div>
         {{ $categories->links() }}
     </div>

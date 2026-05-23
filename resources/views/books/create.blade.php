@@ -77,9 +77,9 @@
 
 <div class="form-container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <h2 style="font-size: 20px; font-weight: 700; margin: 0; color: #111827;">Add New Book</h2>
+        <h2 style="font-size: 20px; font-weight: 700; margin: 0; color: #111827;">{{ __('menu.add_new_book_title') }}</h2>
         <a href="{{ route('books.index') }}" style="color: #4f46e5; text-decoration: none; font-size: 14px; font-weight: 500;">
-            ← Back to List
+            {{ __('menu.back_to_list') }}
         </a>
     </div>
 
@@ -98,24 +98,24 @@
 
         <div class="form-grid">
             <div class="field-group">
-                <label for="title" class="field-label">Title <span style="color: #dc2626;">*</span></label>
+                <label for="title" class="field-label">{{ __('menu.book_title') }} <span style="color: #dc2626;">*</span></label>
                 <input type="text" name="title" id="title" class="input-style" value="{{ old('title') }}" required autocomplete="off">
             </div>
 
             <div class="field-group">
-                <label for="author" class="field-label">Author <span style="color: #dc2626;">*</span></label>
+                <label for="author" class="field-label">{{ __('menu.book_author') }} <span style="color: #dc2626;">*</span></label>
                 <input type="text" name="author" id="author" class="input-style" value="{{ old('author') }}" required autocomplete="off">
             </div>
 
             <div class="field-group">
-                <label for="isbn" class="field-label">ISBN</label>
+                <label for="isbn" class="field-label">{{ __('menu.book_isbn') }}</label>
                 <input type="text" name="isbn" id="isbn" class="input-style" value="{{ old('isbn') }}" placeholder="e.g., 978-3-16-148410-0">
             </div>
 
             <div class="field-group">
-                <label for="category_id" class="field-label">Category <span style="color: #dc2626;">*</span></label>
+                <label for="category_id" class="field-label">{{ __('menu.book_category') }} <span style="color: #dc2626;">*</span></label>
                 <select name="category_id" id="category_id" class="input-style" required>
-                    <option value="">-- Select Category --</option>
+                    <option value="">{{ __('menu.select_category') }}</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                             {{ $category->name }}
@@ -125,43 +125,43 @@
             </div>
 
             <div class="field-group">
-                <label for="publisher" class="field-label">Publisher</label>
+                <label for="publisher" class="field-label">{{ __('menu.book_publisher') }}</label>
                 <input type="text" name="publisher" id="publisher" class="input-style" value="{{ old('publisher') }}">
             </div>
 
             <div class="field-group">
-                <label for="published_year" class="field-label">Published Year</label>
+                <label for="published_year" class="field-label">{{ __('menu.book_published_year') }}</label>
                 <input type="number" name="published_year" id="published_year" class="input-style" min="1000" max="{{ date('Y') }}" value="{{ old('published_year') }}">
             </div>
 
             <div class="field-group">
-                <label for="total_copies" class="field-label">Total Copies <span style="color: #dc2626;">*</span></label>
+                <label for="total_copies" class="field-label">{{ __('menu.book_total_copies') }} <span style="color: #dc2626;">*</span></label>
                 <input type="number" name="total_copies" id="total_copies" class="input-style" min="1" value="{{ old('total_copies', 1) }}" required>
             </div>
 
             <div class="field-group">
-                <label for="status" class="field-label">Status <span style="color: #dc2626;">*</span></label>
+                <label for="status" class="field-label">{{ __('menu.book_status') }} <span style="color: #dc2626;">*</span></label>
                 <select name="status" id="status" class="input-style" required>
-                    <option value="available" {{ old('status') == 'available' ? 'selected' : '' }}>Available</option>
-                    <option value="unavailable" {{ old('status') == 'unavailable' ? 'selected' : '' }}>Unavailable</option>
+                    <option value="available" {{ old('status') == 'available' ? 'selected' : '' }}>{{ __('menu.available') }}</option>
+                    <option value="unavailable" {{ old('status') == 'unavailable' ? 'selected' : '' }}>{{ __('menu.unavailable') }}</option>
                 </select>
             </div>
 
             <div class="field-group full-width">
-                <label for="cover_image" class="field-label">Book Cover Image</label>
+                <label for="cover_image" class="field-label">{{ __('menu.cover_image') }}</label>
                 <input type="file" name="cover_image" id="cover_image" class="input-style" accept="image/*" style="padding: 5px;">
-                <span style="font-size: 12px; color: #6b7280;">Accepted formats: jpeg, png, jpg, webp (Max size: 2MB)</span>
+                <span style="font-size: 12px; color: #6b7280;">{{ __('menu.cover_image_hint') }}</span>
             </div>
 
             <div class="field-group full-width">
-                <label for="description" class="field-label">Description</label>
+                <label for="description" class="field-label">{{ __('menu.description') }}</label>
                 <textarea name="description" id="description" class="input-style" rows="4" style="resize: vertical;">{{ old('description') }}</textarea>
             </div>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
-            <a href="{{ route('books.index') }}" class="btn-cancel">Cancel</a>
-            <button type="submit" class="btn-submit">Save Book</button>
+            <a href="{{ route('books.index') }}" class="btn-cancel">{{ __('menu.cancel') }}</a>
+            <button type="submit" class="btn-submit">{{ __('menu.save_book') }}</button>
         </div>
     </form>
 </div>

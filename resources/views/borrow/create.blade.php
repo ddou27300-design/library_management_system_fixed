@@ -1,13 +1,13 @@
 @extends('layouts.app')
-@section('title', 'Issue Book')
-@section('page-title', 'Issue Book to Student')
+@section('title', __('menu.issue_book_title'))
+@section('page-title', __('menu.issue_book_title'))
 
 @section('content')
 <div class="card form-card">
     <div class="card-header">
-        <h3><i class="fas fa-hand-holding-heart"></i> Issue Book</h3>
+        <h3><i class="fas fa-hand-holding-heart"></i> {{ __('menu.issue_book') }}</h3>
         <a href="{{ route('borrows.index') }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Back
+            <i class="fas fa-arrow-left"></i> {{ __('menu.back') }}
         </a>
     </div>
     <div class="card-body">
@@ -16,10 +16,10 @@
 
             <div class="form-row">
                 <div class="form-group col-6">
-                    <label for="student_id">Student <span class="required">*</span></label>
+                    <label for="student_id">{{ __('menu.student') }} <span class="required">*</span></label>
                     <select id="student_id" name="student_id"
                             class="form-control @error('student_id') is-invalid @enderror" required>
-                        <option value="">— Select Student —</option>
+                        <option value="">{{ __('menu.select_student') }}</option>
                         @foreach($students as $student)
                             <option value="{{ $student->id }}"
                                 {{ (old('student_id', request('student_id')) == $student->id) ? 'selected' : '' }}>
@@ -30,14 +30,14 @@
                     @error('student_id')<span class="field-error">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group col-6">
-                    <label for="book_id">Book <span class="required">*</span></label>
+                    <label for="book_id">{{ __('menu.book_info_borrow') }} <span class="required">*</span></label>
                     <select id="book_id" name="book_id"
                             class="form-control @error('book_id') is-invalid @enderror" required>
-                        <option value="">— Select Book —</option>
+                        <option value="">{{ __('menu.select_book') }}</option>
                         @foreach($books as $book)
                             <option value="{{ $book->id }}"
                                 {{ (old('book_id', request('book_id')) == $book->id) ? 'selected' : '' }}>
-                                {{ $book->title }} — {{ $book->author }} ({{ $book->available_copies }} left)
+                                {{ $book->title }} — {{ $book->author }} ({{ __('menu.copies_left', ['count' => $book->available_copies]) }})
                             </option>
                         @endforeach
                     </select>
@@ -47,7 +47,7 @@
 
             <div class="form-row">
                 <div class="form-group col-4">
-                    <label for="borrow_date">Borrow Date <span class="required">*</span></label>
+                    <label for="borrow_date">{{ __('menu.borrow_date') }} <span class="required">*</span></label>
                     <input type="date" id="borrow_date" name="borrow_date"
                         class="form-control @error('borrow_date') is-invalid @enderror"
                         value="{{ old('borrow_date', today()->toDateString()) }}"
@@ -55,7 +55,7 @@
                     @error('borrow_date')<span class="field-error">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group col-4">
-                    <label for="due_date">Due Date <span class="required">*</span></label>
+                    <label for="due_date">{{ __('menu.due_date') }} <span class="required">*</span></label>
                     <input type="date" id="due_date" name="due_date"
                         class="form-control @error('due_date') is-invalid @enderror"
                         value="{{ old('due_date', today()->addDays(14)->toDateString()) }}"
@@ -63,7 +63,7 @@
                     @error('due_date')<span class="field-error">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group col-4">
-                    <label>Loan Period</label>
+                    <label>{{ __('menu.loan_period') }}</label>
                     <div class="quick-days">
                         <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setDays(7)">7 days</button>
                         <button type="button" class="btn btn-outline-primary btn-sm" onclick="setDays(14)">14 days</button>
@@ -73,16 +73,16 @@
             </div>
 
             <div class="form-group">
-                <label for="notes">Notes (optional)</label>
+                <label for="notes">{{ __('menu.notes_optional') }}</label>
                 <textarea id="notes" name="notes" class="form-control" rows="2"
-                        placeholder="Any special notes about this borrow...">{{ old('notes') }}</textarea>
+                        placeholder="{{ __('menu.notes_placeholder') }}">{{ old('notes') }}</textarea>
             </div>
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-paper-plane"></i> Issue Book
+                    <i class="fas fa-paper-plane"></i> {{ __('menu.issue_book_btn') }}
                 </button>
-                <a href="{{ route('borrows.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                <a href="{{ route('borrows.index') }}" class="btn btn-outline-secondary">{{ __('menu.cancel') }}</a>
             </div>
         </form>
     </div>

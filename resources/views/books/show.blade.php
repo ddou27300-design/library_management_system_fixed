@@ -1,19 +1,19 @@
 @extends('layouts.app')
 @section('title', $book->title)
-@section('page-title', 'Book Detail')
+@section('page-title', __('menu.book_detail'))
 
 @section('content')
 <div class="row-2col" style="align-items:flex-start">
     <!-- Book Info Card -->
     <div class="card">
         <div class="card-header">
-            <h3><i class="fas fa-book"></i> Book Information</h3>
+            <h3><i class="fas fa-book"></i> {{ __('menu.book_info') }}</h3>
             <div>
                 <a href="{{ route('books.edit', $book) }}" class="btn btn-warning btn-sm">
-                    <i class="fas fa-edit"></i> Edit
+                    <i class="fas fa-edit"></i> {{ __('menu.edit') }}
                 </a>
                 <a href="{{ route('books.index') }}" class="btn btn-outline-secondary btn-sm">
-                    <i class="fas fa-arrow-left"></i> Back
+                    <i class="fas fa-arrow-left"></i> {{ __('menu.back') }}
                 </a>
             </div>
         </div>
@@ -28,46 +28,46 @@
                 </div>
                 <div class="book-meta">
                     <h2>{{ $book->title }}</h2>
-                    <p class="book-author">by <strong>{{ $book->author }}</strong></p>
+                    <p class="book-author">{{ __('menu.by_author') }} <strong>{{ $book->author }}</strong></p>
 
                     <div class="meta-grid">
                         <div class="meta-item">
-                            <span class="meta-label">ISBN</span>
+                            <span class="meta-label">{{ __('menu.book_isbn') }}</span>
                             <span class="meta-value text-mono">{{ $book->isbn ?? '—' }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">Category</span>
+                            <span class="meta-label">{{ __('menu.book_category') }}</span>
                             <span class="badge badge-info">{{ $book->category->name }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">Publisher</span>
+                            <span class="meta-label">{{ __('menu.book_publisher') }}</span>
                             <span class="meta-value">{{ $book->publisher ?? '—' }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">Year</span>
+                            <span class="meta-label">{{ __('menu.book_published_year') }}</span>
                             <span class="meta-value">{{ $book->published_year ?? '—' }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">Total Copies</span>
+                            <span class="meta-label">{{ __('menu.book_total_copies') }}</span>
                             <span class="meta-value font-bold">{{ $book->total_copies }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">Available</span>
+                            <span class="meta-label">{{ __('menu.book_available') }}</span>
                             <span class="meta-value font-bold {{ $book->available_copies > 0 ? 'text-success' : 'text-danger' }}">
                                 {{ $book->available_copies }}
                             </span>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">Status</span>
+                            <span class="meta-label">{{ __('menu.book_status') }}</span>
                             <span class="badge badge-{{ $book->isAvailable() ? 'success' : 'danger' }}">
-                                {{ $book->isAvailable() ? 'Available' : 'Unavailable' }}
+                                {{ $book->isAvailable() ? __('menu.available') : __('menu.unavailable') }}
                             </span>
                         </div>
                     </div>
 
                     @if($book->description)
                         <div class="mt-3">
-                            <strong>Description:</strong>
+                            <strong>{{ __('menu.description_label') }}</strong>
                             <p class="text-muted mt-1">{{ $book->description }}</p>
                         </div>
                     @endif
@@ -75,7 +75,7 @@
                     @if($book->isAvailable())
                         <div class="mt-4">
                             <a href="{{ route('borrow.create') }}?book_id={{ $book->id }}" class="btn btn-primary">
-                                <i class="fas fa-hand-holding"></i> Issue This Book
+                                <i class="fas fa-hand-holding"></i> {{ __('menu.issue_this_book') }}
                             </a>
                         </div>
                     @endif
@@ -87,18 +87,18 @@
     <!-- Borrow History -->
     <div class="card">
         <div class="card-header">
-            <h3><i class="fas fa-history"></i> Borrow History</h3>
-            <span class="badge badge-info">{{ $borrowHistory->total() }} records</span>
+            <h3><i class="fas fa-history"></i> {{ __('menu.borrow_history') }}</h3>
+            <span class="badge badge-info">{{ $borrowHistory->total() }} {{ __('menu.records') }}</span>
         </div>
         <div class="card-body p-0">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Student</th>
-                        <th>Borrowed</th>
-                        <th>Due</th>
-                        <th>Returned</th>
-                        <th>Status</th>
+                        <th>{{ __('menu.student') }}</th>
+                        <th>{{ __('menu.borrow_date') }}</th>
+                        <th>{{ __('menu.due_date') }}</th>
+                        <th>{{ __('menu.return_date') }}</th>
+                        <th>{{ __('menu.status') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -108,10 +108,10 @@
                             <td>{{ $borrow->borrow_date->format('d/m/Y') }}</td>
                             <td>{{ $borrow->due_date->format('d/m/Y') }}</td>
                             <td>{{ $borrow->return_date ? $borrow->return_date->format('d/m/Y') : '—' }}</td>
-                            <td><span class="badge badge-{{ $borrow->status }}">{{ ucfirst($borrow->status) }}</span></td>
+                            <td><span class="badge badge-{{ $borrow->status }}">{{ __('menu.status_' . $borrow->status) }}</span></td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="text-center text-muted">Never borrowed yet.</td></tr>
+                        <tr><td colspan="5" class="text-center text-muted">{{ __('menu.never_borrowed') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>

@@ -8,29 +8,18 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StudentController;
-use App\Http\Controllers\TranslateController;
 use Illuminate\Support\Facades\Route;
 
 // Root redirect
 Route::get('/', fn() => redirect()->route('login'));
 
-// ✅ Only keep ONE Language Switch Route inside the 'web' group
-Route::middleware(['web'])->group(function () {
-    Route::get('lang/{locale}', function ($locale) {
-        if (in_array($locale, ['en', 'kh'])) {
-            session()->put('locale', $locale);
-            session()->save(); // Force save the session change immediately
-        }
-        return redirect()->back();
-    })->name('lang.switch');
-});
-
-// AI Translation API routes (accessible when authenticated)
-Route::middleware(['auth'])->group(function () {
-    Route::post('/translate/english',     [TranslateController::class, 'english'])->name('translate.english');
-    Route::post('/translate/khmer',       [TranslateController::class, 'khmer'])->name('translate.khmer');
-    Route::post('/translate/clear-cache', [TranslateController::class, 'clearCache'])->name('translate.clear-cache');
-});
+// Language Switch
+Route::get('lang/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'kh'])) {
+        session()->put('locale', $locale);
+    }
+    return redirect()->back();
+})->name('lang.switch');
 
 // Auth routes (guests only)
 Route::middleware('guest')->group(function () {
@@ -77,7 +66,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Staff management (admin only)
-    Route::middleware('can:admin')->group(function () {
+    Route::middleware('role:admin')->group(function () {
         Route::resource('staff', StaffController::class)->except(['show']);
         
         // Keep legacy /register route working for backward compatibility

@@ -85,7 +85,7 @@
 <div class="row-2col">
     <div class="card">
         <div class="card-header">
-            <h3><i class="fas fa-chart-line"></i> Monthly Activity (Last 6 Months)</h3>
+            <h3><i class="fas fa-chart-line"></i> {{ __('menu.monthly_activity_full') }}</h3>
         </div>
         <div class="card-body" style="height:300px;position:relative;">
             <canvas id="borrowChart"></canvas>
@@ -119,7 +119,7 @@
                     <span class="rank-count">{{ $book->borrows_count }}x</span>
                 </div>
             @empty
-                <p class="text-muted text-center py-4">No borrow data yet.</p>
+                <p class="text-muted text-center py-4">{{ __('menu.no_borrow_data') }}</p>
             @endforelse
         </div>
     </div>
@@ -135,8 +135,8 @@
                     <tr>
                         <th>{{ __('menu.students') }}</th>
                         <th>{{ __('menu.books') }}</th>
-                        <th>Due Date</th>
-                        <th>Days Late</th>
+                        <th>{{ __('menu.due_date') }}</th>
+                        <th>{{ __('menu.days_late') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -145,10 +145,10 @@
                             <td>{{ $b->student->name ?? '—' }}</td>
                             <td>{{ \Illuminate\Support\Str::limit($b->book->title ?? '—', 20) }}</td>
                             <td>{{ $b->due_date->format('d/m/Y') }}</td>
-                            <td class="text-danger font-bold">{{ now()->diffInDays($b->due_date) }}d</td>
+                            <td class="text-danger font-bold">{{ now()->diffInDays($b->due_date) }}{{ __('menu.day_s') }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="4" class="text-center text-success py-4">🎉 No overdue books!</td></tr>
+                        <tr><td colspan="4" class="text-center text-success py-4">🎉 {{ __('menu.no_overdue_books') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -166,11 +166,11 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Code</th>
+                    <th>{{ __('menu.borrow_code') }}</th>
                     <th>{{ __('menu.students') }}</th>
                     <th>{{ __('menu.books') }}</th>
-                    <th>Borrow Date</th>
-                    <th>Due Date</th>
+                    <th>{{ __('menu.borrow_date') }}</th>
+                    <th>{{ __('menu.due_date') }}</th>
                     <th>{{ __('menu.book_status') }}</th>
                     <th>{{ __('menu.book_actions') }}</th>
                 </tr>
@@ -185,7 +185,7 @@
                         <td class="{{ $b->isOverdue() ? 'text-danger font-bold' : '' }}">
                             {{ $b->due_date->format('d/m/Y') }}
                         </td>
-                        <td><span class="badge badge-{{ $b->status }}">{{ ucfirst($b->status) }}</span></td>
+                        <td><span class="badge badge-{{ $b->status }}">{{ __('menu.status_' . $b->status) }}</span></td>
                         <td>
                             @if(in_array($b->status, ['borrowed','overdue']))
                                 <a href="{{ route('borrows.return.form', $b) }}" class="btn btn-sm btn-success">
@@ -199,7 +199,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="text-center text-muted py-4">No transactions yet.</td></tr>
+                    <tr><td colspan="7" class="text-center text-muted py-4">{{ __('menu.no_transactions') }}</td></tr>
                 @endforelse
             </tbody>
         </table>

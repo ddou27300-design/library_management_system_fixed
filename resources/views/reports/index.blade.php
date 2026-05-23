@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Reports')
-@section('page-title', 'Library Reports')
+@section('title', __('menu.reports'))
+@section('page-title', __('menu.library_reports'))
 
 @push('styles')
 <style>
@@ -37,53 +37,53 @@
 <div class="report-nav">
     <a href="{{ route('reports.index') }}" class="report-nav-card" style="border-color:var(--primary,#1a3c5e);background:var(--primary,#1a3c5e);color:#fff;">
         <i class="fas fa-chart-bar"></i>
-        <span data-i18n="overview">Overview</span>
+        <span >{{ __('menu.overview') }}</span>
     </a>
     <a href="{{ route('reports.overdue') }}" class="report-nav-card">
         <i class="fas fa-exclamation-triangle" style="color:#dc2626"></i>
-        <span data-i18n="overdue_books_title">Overdue Books</span>
+        <span >{{ __('menu.overdue_books_title') }}</span>
     </a>
     <a href="{{ route('reports.fines') }}" class="report-nav-card">
         <i class="fas fa-dollar-sign" style="color:#d97706"></i>
-        <span data-i18n="fines_title">Fines</span>
+        <span >{{ __('menu.fines_title') }}</span>
     </a>
     <a href="{{ route('reports.popular') }}" class="report-nav-card">
         <i class="fas fa-fire" style="color:#ea580c"></i>
-        <span data-i18n="popular_title">Popular Books</span>
+        <span >{{ __('menu.popular_title') }}</span>
     </a>
 </div>
 
 {{-- Summary Cards --}}
 <div class="summary-grid">
     <div class="sum-card">
-        <div class="sum-label" data-i18n="total_borrows">Total Borrows</div>
+        <div class="sum-label" >{{ __('menu.total_borrows') }}</div>
         <div class="sum-val" style="color:#2563eb">{{ number_format($summary['total_borrows']) }}</div>
-        <div class="sum-sub" data-i18n="all_time">All time</div>
+        <div class="sum-sub" >{{ __('menu.all_time') }}</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label" data-i18n="active_borrows_lbl">Active Borrows</div>
+        <div class="sum-label" >{{ __('menu.active_borrows_lbl') }}</div>
         <div class="sum-val" style="color:#16a34a">{{ number_format($summary['active_borrows']) }}</div>
-        <div class="sum-sub" data-i18n="currently_out2">Currently out</div>
+        <div class="sum-sub" >{{ __('menu.currently_out2') }}</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label" data-i18n="overdue_lbl">Overdue</div>
+        <div class="sum-label" >{{ __('menu.overdue_lbl') }}</div>
         <div class="sum-val" style="color:#dc2626">{{ number_format($summary['overdue_count']) }}</div>
-        <div class="sum-sub" data-i18n="needs_attention2">Needs attention</div>
+        <div class="sum-sub" >{{ __('menu.needs_attention2') }}</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label" data-i18n="total_fines">Total Fines</div>
+        <div class="sum-label" >{{ __('menu.total_fines') }}</div>
         <div class="sum-val" style="color:#d97706">${{ number_format($summary['total_fines'], 2) }}</div>
-        <div class="sum-sub"><span data-i18n="collected">Collected</span>: ${{ number_format($summary['fines_collected'], 2) }}</div>
+        <div class="sum-sub"><span >{{ __('menu.collected') }}</span>: ${{ number_format($summary['fines_collected'], 2) }}</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label" data-i18n="total_books_lbl">Total Books</div>
+        <div class="sum-label" >{{ __('menu.total_books_lbl') }}</div>
         <div class="sum-val" style="color:#7c3aed">{{ number_format($summary['total_books']) }}</div>
-        <div class="sum-sub" data-i18n="in_catalog">In catalog</div>
+        <div class="sum-sub" >{{ __('menu.in_catalog') }}</div>
     </div>
     <div class="sum-card">
-        <div class="sum-label" data-i18n="students_lbl">Students</div>
+        <div class="sum-label" >{{ __('menu.students_lbl') }}</div>
         <div class="sum-val" style="color:#0891b2">{{ number_format($summary['total_students']) }}</div>
-        <div class="sum-sub" data-i18n="registered">Registered</div>
+        <div class="sum-sub" >{{ __('menu.registered') }}</div>
     </div>
 </div>
 
@@ -93,21 +93,21 @@
     <div class="chart-card">
         <h4>
             <i class="fas fa-chart-line" style="color:#2563eb"></i> 
-            <span data-i18n="monthly_activity">Monthly Borrow Activity</span> ({{ now()->year }})
+            <span >{{ __('menu.monthly_activity') }}</span> ({{ now()->year }})
         </h4>
         <canvas id="monthlyChart" height="100"></canvas>
     </div>
 
     {{-- Category Stats --}}
     <div class="chart-card">
-        <h4><i class="fas fa-tags" style="color:#7c3aed"></i> <span data-i18n="borrows_by_category">Borrows by Category</span></h4>
+        <h4><i class="fas fa-tags" style="color:#7c3aed"></i> <span >{{ __('menu.borrows_by_category') }}</span></h4>
         @php $maxBorrows = $categoryStats->max('borrows') ?: 1; @endphp
         <table class="cat-table">
             <thead>
                 <tr>
-                    <th data-i18n="category">Category</th>
-                    <th style="text-align:right" data-i18n="books">Books</th>
-                    <th style="text-align:right" data-i18n="times_borrowed">Borrows</th>
+                    <th >{{ __('menu.category') }}</th>
+                    <th style="text-align:right" >{{ __('menu.books') }}</th>
+                    <th style="text-align:right" >{{ __('menu.times_borrowed') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -121,7 +121,7 @@
                     <td style="text-align:right;font-weight:600">{{ $cat['borrows'] }}</td>
                 </tr>
                 @empty
-                <tr><td colspan="3" class="text-center text-muted" style="padding:20px" data-i18n="no_data">No data</td></tr>
+                <tr><td colspan="3" class="text-center text-muted" style="padding:20px" >{{ __('menu.no_data') }}</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -130,15 +130,15 @@
 
 {{-- Monthly Table --}}
 <div class="chart-card">
-    <h4><i class="fas fa-table" style="color:#16a34a"></i> <span data-i18n="monthly_summary">Monthly Summary Table</span> — {{ now()->year }}</h4>
+    <h4><i class="fas fa-table" style="color:#16a34a"></i> <span >{{ __('menu.monthly_summary') }}</span> — {{ now()->year }}</h4>
     <div style="overflow-x:auto">
         <table class="cat-table">
             <thead>
                 <tr>
-                    <th data-i18n="month">Month</th>
-                    <th style="text-align:right" data-i18n="status_borrowed">Borrowed</th>
-                    <th style="text-align:right" data-i18n="status_returned">Returned</th>
-                    <th style="text-align:right" data-i18n="collected">Fines Collected</th>
+                    <th >{{ __('menu.month') }}</th>
+                    <th style="text-align:right" >{{ __('menu.status_borrowed') }}</th>
+                    <th style="text-align:right" >{{ __('menu.status_returned') }}</th>
+                    <th style="text-align:right" >{{ __('menu.collected') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -166,13 +166,13 @@ new Chart(ctx, {
         labels: @json($monthlySummary->pluck('month')),
         datasets: [
             {
-                label: 'Borrowed',
+                label: '{{ __('menu.status_borrowed') }}',
                 data: @json($monthlySummary->pluck('borrowed')),
                 backgroundColor: 'rgba(37,99,235,.75)',
                 borderRadius: 4,
             },
             {
-                label: 'Returned',
+                label: '{{ __('menu.status_returned') }}',
                 data: @json($monthlySummary->pluck('returned')),
                 backgroundColor: 'rgba(22,163,74,.65)',
                 borderRadius: 4,

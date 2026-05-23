@@ -56,20 +56,20 @@
 <div class="login-bg">
 
     {{-- Language switcher (top-right of page) --}}
-    <div class="login-lang">
+        <div class="login-lang">
         <a href="{{ route('lang.switch', 'en') }}"
            class="login-lang-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}">
-            ENGLISH
+            {{ __('menu.english') }}
         </a>
         <a href="{{ route('lang.switch', 'kh') }}"
            class="login-lang-btn {{ app()->getLocale() === 'kh' ? 'active' : '' }}">
-            KHMER
+            {{ __('menu.khmer') }}
         </a>
     </div>
 
     <div class="login-card">
         <div class="login-logo">
-            <div class="logo-icon"><i class="fas fa-book-open"></i></div>
+            <img src="{{ asset('images/logo.jpg') }}" alt="Library" style="height: 60px; margin-bottom: 8px;">
             <h1>{{ __('menu.login_title') }}</h1>
             <p>{{ __('menu.login_subtitle') }}</p>
         </div>
@@ -137,8 +137,8 @@
 
         <div class="login-hint">
             <small>
-                <strong>Admin:</strong> admin@library.com / password<br>
-                <strong>Librarian:</strong> librarian@library.com / password
+                <strong>{{ __('menu.role_admin') }}:</strong> admin@library.com / password<br>
+                <strong>{{ __('menu.role_librarian') }}:</strong> librarian@library.com / password
             </small>
         </div>
     </div>

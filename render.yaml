@@ -1,17 +1,9 @@
 services:
   - type: web
     name: library-management-system
-    runtime: php
+    runtime: docker
     plan: free
-    buildCommand: |
-      composer install --no-dev --optimize-autoloader
-      npm install
-      npm run build
-      php artisan storage:link --force
-      php artisan config:cache
-      php artisan route:cache
-      php artisan view:cache
-    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    dockerfilePath: Dockerfile
     envVars:
       - key: APP_ENV
         value: production
@@ -57,4 +49,3 @@ services:
         value: local
       - key: MAIL_MAILER
         value: log
-    preDeployCommand: php artisan migrate --force --seed

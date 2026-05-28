@@ -9,9 +9,12 @@
         <div class="card-header">
             <h3><i class="fas fa-book"></i> {{ __('menu.book_info') }}</h3>
             <div>
-                <a href="{{ route('books.edit', $book) }}" class="btn btn-warning btn-sm">
+                @can('admin')
+                <a href="{{ route('books.edit', $book) }}" class="btn btn-warning btn-sm"
+                   data-confirm="{{ json_encode(['message' => __('menu.edit_book_confirm'), 'icon' => 'warning', 'accent' => true]) }}">
                     <i class="fas fa-edit"></i> {{ __('menu.edit') }}
                 </a>
+                @endcan
                 <a href="{{ route('books.index') }}" class="btn btn-outline-secondary btn-sm">
                     <i class="fas fa-arrow-left"></i> {{ __('menu.back') }}
                 </a>
@@ -37,7 +40,11 @@
                         </div>
                         <div class="meta-item">
                             <span class="meta-label">{{ __('menu.book_category') }}</span>
-                            <span class="badge badge-info">{{ $book->category->name }}</span>
+                            <span class="badge badge-info">{{ $book->category->name ?? __('menu.uncategorized') }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">{{ __('menu.faculty') }}</span>
+                            <span class="meta-value">{{ $book->faculty ?? '—' }}</span>
                         </div>
                         <div class="meta-item">
                             <span class="meta-label">{{ __('menu.book_publisher') }}</span>
@@ -59,8 +66,11 @@
                         </div>
                         <div class="meta-item">
                             <span class="meta-label">{{ __('menu.book_status') }}</span>
-                            <span class="badge badge-{{ $book->isAvailable() ? 'success' : 'danger' }}">
-                                {{ $book->isAvailable() ? __('menu.available') : __('menu.unavailable') }}
+                            @php
+                                $isAvailable = method_exists($book, 'isAvailable') ? $book->isAvailable() : (($book->status === 'available') && ($book->available_copies > 0));
+                            @endphp
+                            <span class="badge badge-{{ $isAvailable ? 'success' : 'danger' }}">
+                                {{ $isAvailable ? __('menu.available') : __('menu.unavailable') }}
                             </span>
                         </div>
                     </div>
@@ -72,9 +82,9 @@
                         </div>
                     @endif
 
-                    @if($book->isAvailable())
+                    @if($isAvailable)
                         <div class="mt-4">
-                            <a href="{{ route('borrow.create') }}?book_id={{ $book->id }}" class="btn btn-primary">
+                            <a href="{{ route('borrows.create') }}?book_id={{ $book->id }}" class="btn btn-primary">
                                 <i class="fas fa-hand-holding"></i> {{ __('menu.issue_this_book') }}
                             </a>
                         </div>
@@ -90,7 +100,7 @@
             <h3><i class="fas fa-history"></i> {{ __('menu.borrow_history') }}</h3>
             <span class="badge badge-info">{{ $borrowHistory->total() }} {{ __('menu.records') }}</span>
         </div>
-        <div class="card-body p-0">
+        <div class="card-body p-0 table-wrap">
             <table class="table">
                 <thead>
                     <tr>

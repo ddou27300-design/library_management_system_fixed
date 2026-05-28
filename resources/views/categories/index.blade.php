@@ -6,12 +6,14 @@
 <div class="card">
     <div class="card-header">
         <h3><i class="fas fa-tags"></i> {{ __('menu.categories') }}</h3>
+        @can('admin')
         <a href="{{ route('categories.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> {{ __('menu.add_new') }}
         </a>
+        @endcan
     </div>
 
-    <div class="card-body p-0">
+    <div class="card-body p-0 table-wrap">
         <table class="table">
             <thead>
                 <tr>
@@ -36,16 +38,19 @@
                         </td>
                         <td>
                             <div class="action-buttons">
-                                <a href="{{ route('categories.edit', $category) }}" class="btn btn-sm btn-outline-primary">
+                                @can('admin')
+                                <a href="{{ route('categories.edit', $category) }}" class="btn btn-sm btn-outline-primary"
+                                   data-confirm="{{ json_encode(['message' => __('menu.edit_category_confirm'), 'icon' => 'warning', 'accent' => true]) }}">
                                     <i class="fas fa-edit"></i> {{ __('menu.edit') }}
                                 </a>
                                 <form action="{{ route('categories.destroy', $category) }}" method="POST" style="display:inline"
-                                      onsubmit="return confirm('{{ __('menu.delete_record_confirm') }}')">
+                                      data-confirm="{{ json_encode(['message' => __('menu.delete_record_confirm')]) }}">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
+                                @endcan
                             </div>
                         </td>
                     </tr>
@@ -53,7 +58,7 @@
                     <tr>
                         <td colspan="5" class="text-center text-muted" style="padding:40px">
                             <i class="fas fa-tags" style="font-size:2rem;opacity:.3;display:block;margin-bottom:10px"></i>
-                            {{ __('menu.no_categories') }} <a href="{{ route('categories.create') }}">{{ __('menu.add_first_category') }}</a>.
+                            {{ __('menu.no_categories') }} @can('admin')<a href="{{ route('categories.create') }}">{{ __('menu.add_first_category') }}</a>@endcan.
                         </td>
                     </tr>
                 @endforelse

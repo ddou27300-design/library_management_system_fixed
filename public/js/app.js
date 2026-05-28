@@ -2,13 +2,31 @@
    Library Management System — App JS
    ============================================================ */
 
-// Sidebar toggle
+// Sidebar toggle with smooth overlay on mobile
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
-    if (sidebar) sidebar.classList.toggle('open');
+    if (!sidebar) return;
+    sidebar.classList.toggle('open');
+    // Create/remove overlay
+    let overlay = document.getElementById('sidebar-overlay');
+    if (sidebar.classList.contains('open')) {
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'sidebar-overlay';
+            overlay.style.cssText = [
+                'position:fixed;inset:0;background:rgba(0,0,0,.4);',
+                'z-index:99;transition:opacity .3s;cursor:pointer;'
+            ].join('');
+            overlay.addEventListener('click', () => toggleSidebar());
+            document.body.appendChild(overlay);
+            requestAnimationFrame(() => overlay.style.opacity = '1');
+        }
+    } else {
+        if (overlay) overlay.remove();
+    }
 }
 
-// Close sidebar when clicking outside on mobile
+// Close sidebar when clicking outside on desktop — using overlay for mobile
 document.addEventListener('click', function (e) {
     const sidebar = document.getElementById('sidebar');
     const toggle  = document.querySelector('.sidebar-toggle');
@@ -16,26 +34,96 @@ document.addEventListener('click', function (e) {
     if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
         if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
             sidebar.classList.remove('open');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (overlay) overlay.remove();
         }
     }
 });
 
-// Auto-dismiss alerts after 5 seconds
+// == Confirmation Modal =======================================
+const modal        = document.getElementById('confirmModal');
+const modalIcon    = document.getElementById('modalIcon');
+const modalTitle   = document.getElementById('modalTitle');
+const modalMessage = document.getElementById('modalMessage');
+const modalConfirm = document.getElementById('modalConfirm');
+const modalCancel  = document.getElementById('modalCancel');
+
+let pendingEl = null;
+
+function showConfirmModal({ title, message, icon, accent }) {
+    if (!modal) return;
+    modalTitle.textContent   = title   || 'Are you sure?';
+    modalMessage.textContent = message || 'Do you really want to do this?';
+    modalIcon.className      = 'modal-icon ' + (icon || 'danger');
+    modalConfirm.className   = 'btn btn-confirm' + (accent ? ' accent' : '');
+    modal.classList.add('active');
+}
+
+function hideConfirmModal() {
+    if (!modal) return;
+    modal.classList.remove('active');
+    pendingEl = null;
+}
+
+modalCancel.addEventListener('click', hideConfirmModal);
+modal.addEventListener('click', function (e) {
+    if (e.target === modal) hideConfirmModal();
+});
+modalConfirm.addEventListener('click', function () {
+    if (pendingEl) {
+        if (pendingEl.tagName === 'FORM') {
+            pendingEl.submit();
+        } else if (pendingEl.tagName === 'A') {
+            window.location.href = pendingEl.href;
+        }
+    }
+    hideConfirmModal();
+});
+
+// Esc key to close
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') hideConfirmModal();
+});
+
+// Auto-dismiss alerts with smooth animation
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.alert').forEach(function (alert) {
         setTimeout(function () {
-            alert.style.transition = 'opacity .4s';
+            alert.style.transition = 'opacity .4s, transform .4s';
             alert.style.opacity = '0';
+            alert.style.transform = 'translateY(-8px)';
             setTimeout(function () { alert.remove(); }, 400);
         }, 5000);
     });
 
-    // Confirm delete forms
+    // Confirm elements with data-confirm attribute (forms + links)
     document.querySelectorAll('[data-confirm]').forEach(function (el) {
-        el.addEventListener('submit', function (e) {
-            const msg = el.getAttribute('data-confirm') || 'Are you sure?';
-            if (!confirm(msg)) e.preventDefault();
-        });
+        function confirmHandler(e) {
+            // For forms prevent submit; for links prevent navigation
+            if (el.tagName === 'FORM') e.preventDefault();
+            if (el.tagName === 'A')     e.preventDefault();
+
+            pendingEl = el;
+            const raw = el.getAttribute('data-confirm') || '';
+            var opts;
+            try {
+                opts = JSON.parse(raw);
+            } catch (_) {
+                opts = { message: raw };
+            }
+            showConfirmModal({
+                title:   opts.title   || 'Are you sure?',
+                message: opts.message || 'Do you really want to do this?',
+                icon:    opts.icon    || 'danger',
+                accent:  opts.accent  || false,
+            });
+        }
+
+        if (el.tagName === 'FORM') {
+            el.addEventListener('submit', confirmHandler);
+        } else {
+            el.addEventListener('click', confirmHandler);
+        }
     });
 
     // Active nav highlight based on URL

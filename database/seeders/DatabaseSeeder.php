@@ -15,11 +15,11 @@ class DatabaseSeeder extends Seeder
     {
         // Create admin user
         User::firstOrCreate(
-            ['email' => 'admin@library.com'],
+            ['email' => 'admin@gmail.com'],
             [
                 'name'     => 'Administrator',
-                'email'    => 'admin@library.com',
-                'password' => Hash::make('password'),
+                'email'    => 'admin@gmail.com',
+                'password' => Hash::make('admin'),
                 'role'     => 'admin',
             ]
         );

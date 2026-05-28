@@ -1,168 +1,112 @@
 @extends('layouts.app')
+@section('title', __('menu.add_new_book_title'))
+@section('page-title', __('menu.add_new_book_title'))
 
 @section('content')
-<style>
-    .form-container {
-        background: #ffffff;
-        border-radius: 8px;
-        padding: 24px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-    }
-    .full-width {
-        grid-column: span 2;
-    }
-    .field-group {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-    .field-label {
-        font-weight: 600;
-        font-size: 14px;
-        color: #333333;
-    }
-    .input-style {
-        width: 100%;
-        padding: 8px 12px;
-        border: 1px solid #d1d5db;
-        border-radius: 6px;
-        font-size: 14px;
-        background-color: #fff;
-        outline: none;
-        box-sizing: border-box;
-    }
-    .input-style:focus {
-        border-color: #2563eb;
-        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-    }
-    .btn-submit {
-        background-color: #2563eb;
-        color: #ffffff;
-        padding: 8px 20px;
-        border: none;
-        border-radius: 6px;
-        font-weight: 500;
-        cursor: pointer;
-    }
-    .btn-submit:hover {
-        background-color: #1d4ed8;
-    }
-    .btn-cancel {
-        background-color: #f3f4f6;
-        color: #4b5563;
-        padding: 8px 20px;
-        border: 1px solid #e5e7eb;
-        border-radius: 6px;
-        font-weight: 500;
-        text-decoration: none;
-        text-align: center;
-    }
-    .btn-cancel:hover {
-        background-color: #e5e7eb;
-    }
-    .error-box {
-        background-color: #fef2f2;
-        border: 1px solid #fee2e2;
-        color: #991b1b;
-        padding: 12px;
-        border-radius: 6px;
-        margin-bottom: 20px;
-    }
-</style>
-
-<div class="form-container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <h2 style="font-size: 20px; font-weight: 700; margin: 0; color: #111827;">{{ __('menu.add_new_book_title') }}</h2>
-        <a href="{{ route('books.index') }}" style="color: #4f46e5; text-decoration: none; font-size: 14px; font-weight: 500;">
-            {{ __('menu.back_to_list') }}
+<div class="card form-card">
+    <div class="card-header">
+        <h3><i class="fas fa-book"></i> {{ __('menu.add_new_book_title') }}</h3>
+        <a href="{{ route('books.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> {{ __('menu.back_to_list') }}
         </a>
     </div>
-
-    @if ($errors->any())
-        <div class="error-box">
-            <ul style="margin: 0; padding-left: 20px;">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <form action="{{ route('books.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-
-        <div class="form-grid">
-            <div class="field-group">
-                <label for="title" class="field-label">{{ __('menu.book_title') }} <span style="color: #dc2626;">*</span></label>
-                <input type="text" name="title" id="title" class="input-style" value="{{ old('title') }}" required autocomplete="off">
-            </div>
-
-            <div class="field-group">
-                <label for="author" class="field-label">{{ __('menu.book_author') }} <span style="color: #dc2626;">*</span></label>
-                <input type="text" name="author" id="author" class="input-style" value="{{ old('author') }}" required autocomplete="off">
-            </div>
-
-            <div class="field-group">
-                <label for="isbn" class="field-label">{{ __('menu.book_isbn') }}</label>
-                <input type="text" name="isbn" id="isbn" class="input-style" value="{{ old('isbn') }}" placeholder="e.g., 978-3-16-148410-0">
-            </div>
-
-            <div class="field-group">
-                <label for="category_id" class="field-label">{{ __('menu.book_category') }} <span style="color: #dc2626;">*</span></label>
-                <select name="category_id" id="category_id" class="input-style" required>
-                    <option value="">{{ __('menu.select_category') }}</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }}
-                        </option>
+    <div class="card-body">
+        @if ($errors->any())
+            <div class="alert alert-error mb-3">
+                <i class="fas fa-exclamation-circle"></i>
+                <ul style="margin:0;padding-left:16px">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
                     @endforeach
-                </select>
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('books.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+
+            <div class="form-row form-row-2">
+                <div class="form-group">
+                    <label for="title">{{ __('menu.book_title') }} <span class="required">*</span></label>
+                    <input type="text" name="title" id="title" class="form-control" value="{{ old('title') }}" required autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="author">{{ __('menu.book_author') }} <span class="required">*</span></label>
+                    <input type="text" name="author" id="author" class="form-control" value="{{ old('author') }}" required autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="isbn">{{ __('menu.book_isbn') }}</label>
+                    <input type="text" name="isbn" id="isbn" class="form-control" value="{{ old('isbn') }}" placeholder="e.g., 978-3-16-148410-0">
+                </div>
+
+                <div class="form-group">
+                    <label for="category_id">{{ __('menu.book_category') }} <span class="required">*</span></label>
+                    <select name="category_id" id="category_id" class="form-control" required>
+                        <option value="">{{ __('menu.select_category') }}</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="faculty">{{ __('menu.faculty') }}</label>
+                    <select name="faculty" id="faculty" class="form-control">
+                        <option value="">{{ __('menu.select_faculty') }}</option>
+                        <option value="{{ __('menu.faculty_college_science_technology') }}" {{ old('faculty') == __('menu.faculty_college_science_technology') ? 'selected' : '' }}>{{ __('menu.faculty_college_science_technology') }}</option>
+                        <option value="{{ __('menu.faculty_college_arts_humanities_languages') }}" {{ old('faculty') == __('menu.faculty_college_arts_humanities_languages') ? 'selected' : '' }}>{{ __('menu.faculty_college_arts_humanities_languages') }}</option>
+                        <option value="{{ __('menu.faculty_college_business_tourism') }}" {{ old('faculty') == __('menu.faculty_college_business_tourism') ? 'selected' : '' }}>{{ __('menu.faculty_college_business_tourism') }}</option>
+                        <option value="{{ __('menu.faculty_college_humanities_community_development') }}" {{ old('faculty') == __('menu.faculty_college_humanities_community_development') ? 'selected' : '' }}>{{ __('menu.faculty_college_humanities_community_development') }}</option>
+                        <option value="{{ __('menu.faculty_college_agriculture_food_processing') }}" {{ old('faculty') == __('menu.faculty_college_agriculture_food_processing') ? 'selected' : '' }}>{{ __('menu.faculty_college_agriculture_food_processing') }}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="publisher">{{ __('menu.book_publisher') }}</label>
+                    <input type="text" name="publisher" id="publisher" class="form-control" value="{{ old('publisher') }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="published_year">{{ __('menu.book_published_year') }}</label>
+                    <input type="number" name="published_year" id="published_year" class="form-control" min="1000" max="{{ date('Y') }}" value="{{ old('published_year') }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="total_copies">{{ __('menu.book_total_copies') }} <span class="required">*</span></label>
+                    <input type="number" name="total_copies" id="total_copies" class="form-control" min="1" value="{{ old('total_copies', 1) }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">{{ __('menu.book_status') }} <span class="required">*</span></label>
+                    <select name="status" id="status" class="form-control" required>
+                        <option value="available" {{ old('status') == 'available' ? 'selected' : '' }}>{{ __('menu.available') }}</option>
+                        <option value="unavailable" {{ old('status') == 'unavailable' ? 'selected' : '' }}>{{ __('menu.unavailable') }}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="cover_image">{{ __('menu.cover_image') }}</label>
+                    <input type="file" name="cover_image" id="cover_image" class="form-control" accept="image/*" style="padding: 5px;">
+                    <span class="form-hint">{{ __('menu.cover_image_hint') }}</span>
+                </div>
+
+                <div class="form-group" style="grid-column:span 2">
+                    <label for="description">{{ __('menu.description') }}</label>
+                    <textarea name="description" id="description" class="form-control" rows="4">{{ old('description') }}</textarea>
+                </div>
             </div>
 
-            <div class="field-group">
-                <label for="publisher" class="field-label">{{ __('menu.book_publisher') }}</label>
-                <input type="text" name="publisher" id="publisher" class="input-style" value="{{ old('publisher') }}">
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> {{ __('menu.save_book') }}
+                </button>
+                <a href="{{ route('books.index') }}" class="btn btn-outline-secondary">{{ __('menu.cancel') }}</a>
             </div>
-
-            <div class="field-group">
-                <label for="published_year" class="field-label">{{ __('menu.book_published_year') }}</label>
-                <input type="number" name="published_year" id="published_year" class="input-style" min="1000" max="{{ date('Y') }}" value="{{ old('published_year') }}">
-            </div>
-
-            <div class="field-group">
-                <label for="total_copies" class="field-label">{{ __('menu.book_total_copies') }} <span style="color: #dc2626;">*</span></label>
-                <input type="number" name="total_copies" id="total_copies" class="input-style" min="1" value="{{ old('total_copies', 1) }}" required>
-            </div>
-
-            <div class="field-group">
-                <label for="status" class="field-label">{{ __('menu.book_status') }} <span style="color: #dc2626;">*</span></label>
-                <select name="status" id="status" class="input-style" required>
-                    <option value="available" {{ old('status') == 'available' ? 'selected' : '' }}>{{ __('menu.available') }}</option>
-                    <option value="unavailable" {{ old('status') == 'unavailable' ? 'selected' : '' }}>{{ __('menu.unavailable') }}</option>
-                </select>
-            </div>
-
-            <div class="field-group full-width">
-                <label for="cover_image" class="field-label">{{ __('menu.cover_image') }}</label>
-                <input type="file" name="cover_image" id="cover_image" class="input-style" accept="image/*" style="padding: 5px;">
-                <span style="font-size: 12px; color: #6b7280;">{{ __('menu.cover_image_hint') }}</span>
-            </div>
-
-            <div class="field-group full-width">
-                <label for="description" class="field-label">{{ __('menu.description') }}</label>
-                <textarea name="description" id="description" class="input-style" rows="4" style="resize: vertical;">{{ old('description') }}</textarea>
-            </div>
-        </div>
-
-        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
-            <a href="{{ route('books.index') }}" class="btn-cancel">{{ __('menu.cancel') }}</a>
-            <button type="submit" class="btn-submit">{{ __('menu.save_book') }}</button>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 @endsection

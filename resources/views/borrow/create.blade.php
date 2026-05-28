@@ -14,8 +14,8 @@
         <form action="{{ route('borrows.store') }}" method="POST">
             @csrf
 
-            <div class="form-row">
-                <div class="form-group col-6">
+            <div class="form-row form-row-2">
+                <div class="form-group">
                     <label for="student_id">{{ __('menu.student') }} <span class="required">*</span></label>
                     <select id="student_id" name="student_id"
                             class="form-control @error('student_id') is-invalid @enderror" required>
@@ -29,7 +29,7 @@
                     </select>
                     @error('student_id')<span class="field-error">{{ $message }}</span>@enderror
                 </div>
-                <div class="form-group col-6">
+                <div class="form-group">
                     <label for="book_id">{{ __('menu.book_info_borrow') }} <span class="required">*</span></label>
                     <select id="book_id" name="book_id"
                             class="form-control @error('book_id') is-invalid @enderror" required>
@@ -45,8 +45,8 @@
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group col-4">
+            <div class="form-row form-row-3">
+                <div class="form-group">
                     <label for="borrow_date">{{ __('menu.borrow_date') }} <span class="required">*</span></label>
                     <input type="date" id="borrow_date" name="borrow_date"
                         class="form-control @error('borrow_date') is-invalid @enderror"
@@ -54,7 +54,7 @@
                         max="{{ today()->toDateString() }}" required>
                     @error('borrow_date')<span class="field-error">{{ $message }}</span>@enderror
                 </div>
-                <div class="form-group col-4">
+                <div class="form-group">
                     <label for="due_date">{{ __('menu.due_date') }} <span class="required">*</span></label>
                     <input type="date" id="due_date" name="due_date"
                         class="form-control @error('due_date') is-invalid @enderror"
@@ -62,7 +62,7 @@
                         min="{{ today()->addDay()->toDateString() }}" required>
                     @error('due_date')<span class="field-error">{{ $message }}</span>@enderror
                 </div>
-                <div class="form-group col-4">
+                <div class="form-group">
                     <label>{{ __('menu.loan_period') }}</label>
                     <div class="quick-days">
                         <button type="button" class="btn btn-outline-secondary btn-sm" onclick="setDays(7)">7 days</button>

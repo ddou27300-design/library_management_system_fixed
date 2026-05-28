@@ -4,17 +4,23 @@
 
 @push('styles')
 <style>
+@media (max-width: 480px) {
+    .table-popular th:nth-child(3), .table-popular td:nth-child(3),
+    .table-popular th:nth-child(4), .table-popular td:nth-child(4),
+    .table-popular th:nth-child(5), .table-popular td:nth-child(5),
+    .table-popular th:nth-child(6), .table-popular td:nth-child(6) { display: none; }
+}
 .rank-badge {
     display:inline-flex; align-items:center; justify-content:center;
     width:32px; height:32px; border-radius:50%; font-weight:700; font-size:.9rem;
 }
-.rank-1 { background:#fef3c7; color:#d97706; border:2px solid #f59e0b; }
-.rank-2 { background:#f1f5f9; color:#475569; border:2px solid #94a3b8; }
-.rank-3 { background:#fef2f2; color:#dc2626; border:2px solid #fca5a5; }
-.rank-other { background:#f8fafc; color:#94a3b8; border:1px solid #e2e8f0; font-size:.8rem; }
-.borrow-bar-bg { background:#e5e9f2; border-radius:4px; height:8px; }
-.borrow-bar-fill { background:linear-gradient(90deg,#2563eb,#7c3aed); border-radius:4px; height:8px; transition:width .4s; }
-.fire-icon { color:#ea580c; }
+.rank-1 { background:var(--warning-light); color:var(--warning); border:2px solid var(--accent); }
+.rank-2 { background:var(--bg); color:var(--text-muted); border:2px solid var(--border); }
+.rank-3 { background:var(--danger-light); color:var(--danger); border:2px solid #f0bebe; }
+.rank-other { background:var(--bg); color:var(--text-muted); border:1px solid var(--border); font-size:.8rem; }
+.borrow-bar-bg { background:var(--border); border-radius:4px; height:8px; }
+.borrow-bar-fill { background:linear-gradient(90deg,var(--primary),var(--accent)); border-radius:4px; height:8px; transition:width .4s; }
+.fire-icon { color:var(--accent); }
 </style>
 @endpush
 
@@ -34,7 +40,7 @@
 
     @php $maxBorrows = $books->first()->borrows_count ?? 1; @endphp
 
-    <div class="card-body p-0">
+    <div class="card-body p-0 table-wrap table-popular">
         <table class="table table-hover">
             <thead>
                 <tr>

@@ -4,9 +4,14 @@
 
 @push('styles')
 <style>
-.role-admin     { background:#fef3c7;color:#d97706;border:1px solid #fcd34d; }
-.role-librarian { background:#dbeafe;color:#2563eb;border:1px solid #93c5fd; }
-.you-badge { background:#dcfce7;color:#16a34a;border:1px solid #86efac;font-size:.7rem;padding:2px 7px;border-radius:20px;margin-left:6px;font-weight:600; }
+.role-admin     { background:var(--warning-light);color:var(--warning);border:1px solid #f0d8a0; }
+.role-librarian { background:var(--primary-soft);color:var(--primary);border:1px solid #b8d1ed; }
+.you-badge { background:var(--success-light);color:var(--success);border:1px solid #a3d9bf;font-size:.7rem;padding:2px 7px;border-radius:20px;margin-left:6px;font-weight:600; }
+@media (max-width: 480px) {
+    .staff-table th:nth-child(1), .staff-table td:nth-child(1),
+    .staff-table th:nth-child(5), .staff-table td:nth-child(5),
+    .staff-table th:nth-child(3), .staff-table td:nth-child(3) { display: none; }
+}
 </style>
 @endpush
 
@@ -19,7 +24,7 @@
         </a>
     </div>
 
-    <div class="card-body p-0">
+    <div class="card-body p-0 table-wrap staff-table">
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -51,12 +56,13 @@
                     <td>{{ $user->created_at->format('d M Y') }}</td>
                     <td>
                         <div class="action-buttons">
-                            <a href="{{ route('staff.edit', $user) }}" class="btn btn-sm btn-outline-primary" title="{{ __('menu.edit') }}">
+                            <a href="{{ route('staff.edit', $user) }}" class="btn btn-sm btn-outline-primary" title="{{ __('menu.edit') }}"
+                               data-confirm="{{ json_encode(['message' => __('menu.edit_staff_confirm', ['name' => $user->name]), 'icon' => 'warning', 'accent' => true]) }}">
                                 <i class="fas fa-edit"></i>
                             </a>
                             @if($user->id !== Auth::id())
                             <form action="{{ route('staff.destroy', $user) }}" method="POST" style="display:inline"
-                                  onsubmit="return confirm('{{ __('menu.delete_staff_confirm', ['name' => addslashes($user->name)]) }}')">
+                                  data-confirm="{{ json_encode(['message' => __('menu.delete_staff_confirm', ['name' => $user->name])]) }}">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                     <i class="fas fa-trash"></i>

@@ -162,6 +162,12 @@ class BorrowController extends Controller
         return redirect()->route('borrows.index')->with('success', $msg);
     }
 
+    public function printReceipt($id)
+    {
+        $borrow = Borrow::with(['student', 'book.category', 'issuedBy'])->findOrFail($id);
+        return view('borrow.print', compact('borrow'));
+    }
+
     /**
      * 🟢 បន្ថែមថ្មី៖ មុខងារលុបទិន្នន័យ (Destroy Method)
      * មុខងារនេះនឹងលុបកត់ត្រាខ្ចី ហើយបើវាជាសៀវភៅដែលមិនទាន់សង វានឹងបូកចំនួនសៀវភៅចូលក្នុងឃ្លាំងវិញ

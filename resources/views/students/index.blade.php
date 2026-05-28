@@ -3,12 +3,21 @@
 @section('page-title', __('menu.students'))
 
 @section('content')
+<style>
+@media (max-width: 480px) {
+    .students-table th:nth-child(1), .students-table td:nth-child(1),
+    .students-table th:nth-child(4), .students-table td:nth-child(4),
+    .students-table th:nth-child(5), .students-table td:nth-child(5) { display: none; }
+}
+</style>
 <div class="card">
     <div class="card-header">
         <h3><i class="fas fa-user-graduate"></i> {{ __('menu.students') }}</h3>
+        @can('admin')
         <a href="{{ route('students.create') }}" class="btn btn-primary">
             <i class="fas fa-user-plus"></i> {{ __('menu.add_new') }}
         </a>
+        @endcan
     </div>
 
     {{-- Filter Bar --}}
@@ -44,7 +53,7 @@
         </form>
     </div>
 
-    <div class="card-body p-0">
+    <div class="card-body p-0 table-wrap students-table">
         <table class="table">
             <thead>
                 <tr>
@@ -105,17 +114,20 @@
                                 <a href="{{ route('students.show', $student) }}" class="btn btn-sm btn-info" title="{{ __('menu.view') }}">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('students.edit', $student) }}" class="btn btn-sm btn-outline-primary" title="{{ __('menu.edit') }}">
+                                @can('admin')
+                                <a href="{{ route('students.edit', $student) }}" class="btn btn-sm btn-outline-primary" title="{{ __('menu.edit') }}"
+                                   data-confirm="{{ json_encode(['message' => __('menu.edit_student_confirm', ['name' => $student->name]), 'icon' => 'warning', 'accent' => true]) }}">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form action="{{ route('students.destroy', $student) }}" method="POST" style="display:inline"
-                                      onsubmit="return confirm('{{ __('menu.delete_student_confirm', ['name' => addslashes($student->name)]) }}')">
+                                      data-confirm="{{ json_encode(['message' => __('menu.delete_student_confirm', ['name' => $student->name])]) }}">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"
                                         {{ $student->active_borrows_count > 0 ? 'disabled' : '' }}>
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
+                                @endcan
                             </div>
                         </td>
                     </tr>
@@ -124,7 +136,7 @@
                         <td colspan="7" class="text-center text-muted" style="padding:40px">
                             <i class="fas fa-user-graduate" style="font-size:2rem;opacity:.3;display:block;margin-bottom:10px"></i>
                             {{ __('menu.no_students') }}
-                            <a href="{{ route('students.create') }}">{{ __('menu.register_one') }}</a>.
+                            @can('admin')<a href="{{ route('students.create') }}">{{ __('menu.register_one') }}</a>@endcan.
                         </td>
                     </tr>
                 @endforelse

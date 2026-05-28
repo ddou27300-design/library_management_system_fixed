@@ -4,9 +4,15 @@
 
 @push('styles')
 <style>
-.overdue-badge { display:inline-flex; align-items:center; gap:5px; background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; padding:3px 10px; font-size:.8rem; font-weight:600; }
-.days-overdue { font-weight:700; color:#dc2626; }
-.fine-est { color:#d97706; font-weight:600; }
+.overdue-badge { display:inline-flex; align-items:center; gap:5px; background:var(--danger-light); color:var(--danger); border:1px solid #f0bebe; border-radius:6px; padding:3px 10px; font-size:.8rem; font-weight:600; }
+.days-overdue { font-weight:700; color:var(--danger); }
+.fine-est { color:var(--accent); font-weight:600; }
+@media (max-width: 480px) {
+    .table-overdue th:nth-child(1), .table-overdue td:nth-child(1),
+    .table-overdue th:nth-child(4), .table-overdue td:nth-child(4),
+    .table-overdue th:nth-child(6), .table-overdue td:nth-child(6),
+    .table-overdue th:nth-child(7), .table-overdue td:nth-child(7) { display: none; }
+}
 </style>
 @endpush
 
@@ -21,19 +27,19 @@
 
 <div class="card">
     <div class="card-header">
-        <h3><i class="fas fa-exclamation-triangle" style="color:#dc2626"></i> {{ __('menu.overdue_books_title') }}</h3>
+        <h3><i class="fas fa-exclamation-triangle text-danger"></i> {{ __('menu.overdue_books_title') }}</h3>
         <span class="overdue-badge"><i class="fas fa-clock"></i> {{ __('menu.overdue_records_count', ['count' => $borrows->total()]) }}</span>
     </div>
 
     @if($borrows->total() === 0)
         <div class="card-body" style="text-align:center;padding:60px 20px">
-            <i class="fas fa-check-circle" style="font-size:3rem;color:#16a34a;display:block;margin-bottom:12px"></i>
-            <h3 style="color:#16a34a;margin:0 0 6px">{{ __('menu.all_good') }}</h3>
+            <i class="fas fa-check-circle text-success" style="font-size:3rem;display:block;margin-bottom:12px"></i>
+            <h3 style="color:var(--success);margin:0 0 6px">{{ __('menu.all_good') }}</h3>
             <p class="text-muted">{{ __('menu.no_overdue_msg') }}</p>
             <a href="{{ route('borrows.index') }}" class="btn btn-primary" style="margin-top:12px">{{ __('menu.view_all_borrows') }}</a>
         </div>
     @else
-        <div class="card-body p-0">
+        <div class="card-body p-0 table-wrap table-overdue">
             <table class="table table-hover">
                 <thead>
                     <tr>

@@ -4,16 +4,25 @@
 
 @push('styles')
 <style>
+@media (max-width: 480px) {
+    .table-fines th:nth-child(1), .table-fines td:nth-child(1),
+    .table-fines th:nth-child(4), .table-fines td:nth-child(4),
+    .table-fines th:nth-child(5), .table-fines td:nth-child(5),
+    .table-fines th:nth-child(8), .table-fines td:nth-child(8) { display: none; }
+    .fine-total-banner { padding:14px 18px; flex-direction:column; text-align:center; gap:8px; }
+    .fine-total-banner i { font-size:1.5rem; }
+    .fine-total-banner .amt { font-size:1.6rem; }
+}
 .fine-total-banner {
-    background: linear-gradient(135deg,#d97706,#f59e0b);
-    color:#fff; border-radius:12px; padding:20px 24px;
+    background: linear-gradient(135deg,var(--accent),var(--warning));
+    color:#fff; border-radius:var(--radius); padding:20px 24px;
     display:flex; align-items:center; gap:16px; margin-bottom:24px;
 }
 .fine-total-banner i { font-size:2rem; opacity:.8; }
 .fine-total-banner .amt { font-size:2rem; font-weight:700; }
 .fine-total-banner .lbl { font-size:.85rem; opacity:.85; }
-.badge-paid   { background:#dcfce7;color:#16a34a; }
-.badge-unpaid { background:#fef2f2;color:#dc2626; }
+.badge-paid   { background:var(--success-light);color:var(--success); }
+.badge-unpaid { background:var(--danger-light);color:var(--danger); }
 </style>
 @endpush
 
@@ -36,7 +45,7 @@
 
 <div class="card">
     <div class="card-header">
-        <h3><i class="fas fa-dollar-sign" style="color:#d97706"></i> {{ __('menu.fine_records') }}</h3>
+        <h3><i class="fas fa-dollar-sign text-warning"></i> {{ __('menu.fine_records') }}</h3>
     </div>
 
     {{-- Date filter --}}
@@ -51,7 +60,7 @@
         </form>
     </div>
 
-    <div class="card-body p-0">
+    <div class="card-body p-0 table-wrap table-fines">
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -77,7 +86,7 @@
                     <td>{{ Str::limit($borrow->book->title ?? '—', 28) }}</td>
                     <td>{{ $borrow->due_date->format('d M Y') }}</td>
                     <td>{{ $borrow->return_date ? $borrow->return_date->format('d M Y') : '—' }}</td>
-                    <td style="font-weight:700;color:#d97706">${{ number_format($borrow->fine_amount, 2) }}</td>
+                    <td style="font-weight:700;color:var(--accent)">${{ number_format($borrow->fine_amount, 2) }}</td>
                     <td>
                         @if($borrow->status === 'returned')
                             <span class="badge badge-paid">{{ __('menu.paid_returned') }}</span>

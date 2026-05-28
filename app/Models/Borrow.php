@@ -43,7 +43,7 @@ class Borrow extends Model
     // កែសម្រួលការភ្ជាប់ទំនាក់ទំនង (Relationship) ឱ្យត្រូវជាមួយ Student ID (String) ក្នុង Database របស់លោកអ្នក
     public function student()
     {
-        return $this->belongsTo(Student::class, 'student_id', 'student_id');
+        return $this->belongsTo(Student::class, 'student_id', 'id');
     }
 
     public function book()

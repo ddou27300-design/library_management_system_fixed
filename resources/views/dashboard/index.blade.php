@@ -3,6 +3,15 @@
 @section('page-title', __('menu.dashboard'))
 
 @section('content')
+<style>
+@media (max-width: 480px) {
+    .dash-recent th:nth-child(1), .dash-recent td:nth-child(1),
+    .dash-recent th:nth-child(4), .dash-recent td:nth-child(4),
+    .dash-recent th:nth-child(5), .dash-recent td:nth-child(5),
+    .dash-recent th:nth-child(6), .dash-recent td:nth-child(6) { display: none; }
+    .dash-overdue th:nth-child(3), .dash-overdue td:nth-child(3) { display: none; }
+}
+</style>
 
 {{-- Welcome Banner --}}
 <div class="welcome-banner">
@@ -16,23 +25,23 @@
 {{-- Quick Actions --}}
 <div class="quick-actions">
     <a href="{{ route('borrows.create') }}" class="quick-action-btn">
-        <i class="fas fa-hand-holding-heart" style="color:#2563eb"></i>
+        <i class="fas fa-hand-holding-heart text-primary"></i>
         <span>{{ __('menu.issue_book') }}</span>
     </a>
     <a href="{{ route('books.create') }}" class="quick-action-btn">
-        <i class="fas fa-plus-circle" style="color:#16a34a"></i>
+        <i class="fas fa-plus-circle text-success"></i>
         <span>{{ __('menu.add_book') }}</span>
     </a>
     <a href="{{ route('students.create') }}" class="quick-action-btn">
-        <i class="fas fa-user-plus" style="color:#d97706"></i>
+        <i class="fas fa-user-plus text-accent"></i>
         <span>{{ __('menu.register_student') }}</span>
     </a>
     <a href="{{ route('reports.overdue') }}" class="quick-action-btn">
-        <i class="fas fa-exclamation-triangle" style="color:#dc2626"></i>
+        <i class="fas fa-exclamation-triangle text-danger"></i>
         <span>{{ __('menu.overdue') }}</span>
     </a>
     <a href="{{ route('reports.index') }}" class="quick-action-btn">
-        <i class="fas fa-chart-bar" style="color:#7c3aed"></i>
+        <i class="fas fa-chart-bar text-info"></i>
         <span>{{ __('menu.reports') }}</span>
     </a>
 </div>
@@ -129,7 +138,7 @@
             <h3><i class="fas fa-exclamation-triangle text-danger"></i> {{ __('menu.overdue_books') }}</h3>
             <a href="{{ route('reports.overdue') }}" class="btn btn-sm btn-outline-danger">{{ __('menu.view') }}</a>
         </div>
-        <div class="card-body p-0">
+        <div class="card-body p-0 table-wrap dash-overdue">
             <table class="table">
                 <thead>
                     <tr>
@@ -162,7 +171,7 @@
         <h3><i class="fas fa-clock"></i> {{ __('menu.borrow_records') }}</h3>
         <a href="{{ route('borrows.index') }}" class="btn btn-sm btn-outline-primary">{{ __('menu.view') }}</a>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body p-0 table-wrap dash-recent">
         <table class="table table-hover">
             <thead>
                 <tr>

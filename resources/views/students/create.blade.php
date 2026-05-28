@@ -14,15 +14,15 @@
         <form action="{{ route('students.store') }}" method="POST">
             @csrf
 
-            <div class="form-row">
-                <div class="form-group col-4">
+            <div class="form-row form-row-2">
+                <div class="form-group">
                     <label for="student_id">{{ __('menu.student_id') }} <span class="required">*</span></label>
                     <input type="text" id="student_id" name="student_id"
                            class="form-control @error('student_id') is-invalid @enderror"
                            value="{{ old('student_id') }}" placeholder="{{ __('menu.student_id') }}" required>
                     @error('student_id')<span class="field-error">{{ $message }}</span>@enderror
                 </div>
-                <div class="form-group col-8">
+                <div class="form-group">
                     <label for="name">{{ __('menu.full_name_required') }} <span class="required">*</span></label>
                     <input type="text" id="name" name="name"
                            class="form-control @error('name') is-invalid @enderror"
@@ -31,33 +31,33 @@
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group col-6">
+            <div class="form-row form-row-2">
+                <div class="form-group">
                     <label for="email">{{ __('menu.email') }}</label>
                     <input type="email" id="email" name="email"
                            class="form-control @error('email') is-invalid @enderror"
                            value="{{ old('email') }}" placeholder="{{ __('menu.email_placeholder') }}">
                     @error('email')<span class="field-error">{{ $message }}</span>@enderror
                 </div>
-                <div class="form-group col-6">
+                <div class="form-group">
                     <label for="phone">{{ __('menu.phone') }}</label>
                     <input type="text" id="phone" name="phone" class="form-control"
                            value="{{ old('phone') }}" placeholder="{{ __('menu.phone') }}">
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group col-4">
+            <div class="form-row form-row-3">
+                <div class="form-group">
                     <label for="class">{{ __('menu.class_year') }}</label>
                     <input type="text" id="class" name="class" class="form-control"
                            value="{{ old('class') }}" placeholder="{{ __('menu.class_year') }}">
                 </div>
-                <div class="form-group col-4">
+                <div class="form-group">
                     <label for="major">{{ __('menu.major') }}</label>
                     <input type="text" id="major" name="major" class="form-control"
                            value="{{ old('major') }}" placeholder="{{ __('menu.major') }}">
                 </div>
-                <div class="form-group col-4">
+                <div class="form-group">
                     <label for="status">{{ __('menu.status') }} <span class="required">*</span></label>
                     <select id="status" name="status" class="form-control" required>
                         <option value="active" {{ old('status', 'active') === 'active' ? 'selected' : '' }}>{{ __('menu.status_active') }}</option>

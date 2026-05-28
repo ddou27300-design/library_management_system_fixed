@@ -26,11 +26,22 @@ class BookController extends Controller
                 $query->where('available_copies', 0);
             }
         }
+        if ($request->filled('faculty')) {
+            $query->where('faculty', $request->faculty);
+        }
 
         $books      = $query->latest()->paginate(15)->withQueryString();
         $categories = Category::orderBy('name')->get();
 
-        return view('books.index', compact('books', 'categories'));
+        $faculties = [
+            __('menu.faculty_college_science_technology'),
+            __('menu.faculty_college_arts_humanities_languages'),
+            __('menu.faculty_college_business_tourism'),
+            __('menu.faculty_college_humanities_community_development'),
+            __('menu.faculty_college_agriculture_food_processing'),
+        ];
+
+        return view('books.index', compact('books', 'categories', 'faculties'));
     }
 
     public function create()
@@ -46,6 +57,7 @@ class BookController extends Controller
             'author'         => 'required|string|max:255',
             'isbn'           => 'nullable|string|max:20|unique:books,isbn',
             'category_id'    => 'required|exists:categories,id',
+            'faculty'        => 'nullable|string|max:100',
             'published_year' => 'nullable|integer|min:1000|max:' . date('Y'),
             'publisher'      => 'nullable|string|max:255',
             'description'    => 'nullable|string',
@@ -88,6 +100,7 @@ class BookController extends Controller
             'author'         => 'required|string|max:255',
             'isbn'           => 'nullable|string|max:20|unique:books,isbn,' . $book->id,
             'category_id'    => 'required|exists:categories,id',
+            'faculty'        => 'nullable|string|max:100',
             'published_year' => 'nullable|integer|min:1000|max:' . date('Y'),
             'publisher'      => 'nullable|string|max:255',
             'description'    => 'nullable|string',

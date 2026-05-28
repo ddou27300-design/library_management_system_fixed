@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ __('menu.login_title') }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,6 +16,17 @@
             font-family: 'Hanuman', sans-serif !important;
         }
         @endif
+
+        /* Staggered fade-in for form fields */
+        .form-group { animation: fadeUp .5s ease both; }
+        .form-group:nth-child(1) { animation-delay: .1s; }
+        .form-group:nth-child(2) { animation-delay: .2s; }
+        .form-check { animation: fadeUp .5s ease .3s both; }
+        .btn-login  { animation: fadeUp .5s ease .35s both; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
 
         /* Language switcher on login page */
         .login-lang {
@@ -69,9 +80,9 @@
 
     <div class="login-card">
         <div class="login-logo">
-            <img src="{{ asset('images/logo.jpg') }}" alt="Library" style="height: 60px; margin-bottom: 8px;">
-            <h1>{{ __('menu.login_title') }}</h1>
-            <p>{{ __('menu.login_subtitle') }}</p>
+            <img src="{{ asset('images/logo.png') }}" alt="Library" style="height: 60px; margin-bottom: 8px;">
+            <h1>{{ __('menu.library_ms') }}</h1>
+            <p>NATIONAL MEANCHEY UNIVERSITY</p>
         </div>
 
         @if($errors->any())
@@ -135,12 +146,6 @@
             </button>
         </form>
 
-        <div class="login-hint">
-            <small>
-                <strong>{{ __('menu.role_admin') }}:</strong> admin@library.com / password<br>
-                <strong>{{ __('menu.role_librarian') }}:</strong> librarian@library.com / password
-            </small>
-        </div>
     </div>
 </div>
 <script>

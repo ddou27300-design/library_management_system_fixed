@@ -68,8 +68,8 @@
             @csrf
 
             {{-- 🎨 កែសម្រួល៖ ប្រើប្រាស់តែ <div class="form-row"> សុទ្ធ ដោយមិនបាច់ថែម row ឬ mb-3 នាំឱ្យជល់ CSS ដើម --}}
-            <div class="form-row">
-                <div class="form-group col-4">
+            <div class="form-row form-row-3">
+                <div class="form-group">
                     <label for="return_date">{{ __('menu.return_date') }} <span class="required">*</span></label>
                     <input type="date" id="return_date" name="return_date"
                            class="form-control"
@@ -78,7 +78,7 @@
                            max="{{ today()->toDateString() }}"
                            onchange="calculateFine()" required>
                 </div>
-                <div class="form-group col-4">
+                <div class="form-group">
                     <label for="condition">{{ __('menu.book_condition') }} <span class="required">*</span></label>
                     <select id="condition" name="condition" class="form-control" onchange="calculateFine()">
                         <option value="good">{{ __('menu.condition_good') }}</option>
@@ -86,7 +86,7 @@
                         <option value="lost">{{ __('menu.condition_lost') }}</option>
                     </select>
                 </div>
-                <div class="form-group col-4">
+                <div class="form-group">
                     <label>{{ __('menu.estimated_fine') }}</label>
                     {{-- 🎨 កែសម្រួល៖ បង្វិលមកប្រើ Class fine-display ដើមរបស់អ្នកវិញ --}}
                     <div class="fine-display" id="fineDisplay">$0.00</div>

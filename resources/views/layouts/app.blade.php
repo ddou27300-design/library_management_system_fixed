@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" id="html-root">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', __('menu.dashboard')) — {{ __('menu.library_ms') }}</title>
 
@@ -30,8 +30,8 @@
 
         .lang-switcher {
             display: flex; align-items: center; gap: 4px;
-            background: var(--bg, #f4f6fb);
-            border: 1.5px solid var(--border, #dde3ef);
+            background: var(--bg);
+            border: 1.5px solid var(--border);
             border-radius: 999px; padding: 3px 5px;
         }
         .lang-btn {
@@ -40,24 +40,15 @@
             font-size: .8rem; font-weight: 700;
             border: none; background: transparent; cursor: pointer;
             transition: all .2s ease;
-            color: var(--text-muted, #6b7794);
+            color: var(--text-muted);
             white-space: nowrap;
-            font-family: 'DM Sans', sans-serif;
+            font-family: var(--font-body);
         }
-        .lang-btn:hover { color: var(--primary, #1a3c5e); }
+        .lang-btn:hover { color: var(--primary); }
         .lang-btn.active {
-            background: var(--primary, #1a3c5e);
+            background: var(--primary);
             color: #fff !important;
             box-shadow: 0 2px 8px rgba(26,60,94,.25);
-        }
-
-
-
-
-        .nav-section-label {
-            font-size: .68rem; font-weight: 700; letter-spacing: 1px;
-            text-transform: uppercase; color: rgba(255,255,255,.35);
-            padding: 14px 22px 4px;
         }
     </style>
     @stack('styles')
@@ -66,9 +57,9 @@
 
 {{-- ===== SIDEBAR ===== --}}
 <aside class="sidebar" id="sidebar">
-    <a href="{{ route('dashboard') }}" class="sidebar-brand">
-        <i class="fas fa-book-open"></i>
-        <span>{{ __('menu.library_ms') }}</span>
+    <a href="{{ route('dashboard') }}" class="sidebar-brand" style="flex-direction:column;gap:6px;padding:20px 16px 16px;text-align:center;">
+        <img src="{{ asset('images/logo.png') }}" alt="Library" style="width:60px;height:60px;border-radius:12px;object-fit:cover;">
+        <span style="font-size:1.05rem;letter-spacing:1.2px;">{{ __('menu.library_ms') }}</span>
     </a>
 
     <nav class="sidebar-nav">
@@ -100,10 +91,12 @@
 
         <div class="nav-section-label" data-i18n="transactions">{{ __('menu.transactions') }}</div>
 
+        @can('admin')
         <a href="{{ route('borrows.create') }}" class="nav-item {{ request()->routeIs('borrows.create') ? 'active' : '' }}">
             <i class="fas fa-hand-holding-heart"></i>
             <span data-i18n="issue_book">{{ __('menu.issue_book') }}</span>
         </a>
+        @endcan
 
         <a href="{{ route('borrows.index') }}" class="nav-item {{ request()->routeIs('borrows.index') || request()->routeIs('borrows.show') || request()->routeIs('borrows.return*') ? 'active' : '' }}">
             <i class="fas fa-exchange-alt"></i>
@@ -138,21 +131,32 @@
             <i class="fas fa-users-cog"></i>
             <span data-i18n="staff">{{ __('menu.staff') }}</span>
         </a>
-        <a href="{{ route('staff.create') }}" class="nav-item {{ request()->routeIs('register') ? 'active' : '' }}">
+        <a href="{{ route('staff.create') }}" class="nav-item {{ request()->routeIs('staff.create') || request()->routeIs('register') ? 'active' : '' }}">
             <i class="fas fa-user-plus"></i>
             <span data-i18n="add_staff">{{ __('menu.add_staff') }}</span>
         </a>
         @endif
+
+        <div class="nav-section-label" style="margin-top:8px;">{{ __('menu.my_profile') }}</div>
+        <a href="{{ route('profile.show') }}" class="nav-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+            <i class="fas fa-user-cog"></i>
+            <span>{{ __('menu.profile_settings') }}</span>
+        </a>
     </nav>
 
     <div class="sidebar-footer">
-        <div class="user-badge">
-            <i class="fas fa-user-circle"></i>
+        <a href="{{ route('profile.show') }}" class="user-badge" style="text-decoration:none;">
+            @if(Auth::user()->avatar)
+                <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar"
+                     style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+            @else
+                <i class="fas fa-user-circle"></i>
+            @endif
             <div>
                 <div style="color:#e2e8f0;font-size:13px;font-weight:600;">{{ Auth::user()->name }}</div>
-                <div style="font-size:11px;color:#64748b;text-transform:capitalize;">{{ __('menu.role_' . Auth::user()->role) }}</div>
+                <div style="font-size:11px;color:var(--accent);text-transform:capitalize;">{{ __('menu.role_' . Auth::user()->role) }}</div>
             </div>
-        </div>
+        </a>
     </div>
 </aside>
 
@@ -227,8 +231,21 @@
 <script src="{{ asset('js/dashboard.js') }}"></script>
 <script src="{{ asset('js/validation.js') }}"></script>
 
-
-
 @stack('scripts')
+
+{{-- Confirmation Modal --}}
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+        <div class="modal-icon danger" id="modalIcon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 id="modalTitle">{{ __('menu.are_you_sure') }}</h3>
+        <p id="modalMessage">{{ __('menu.confirm_delete_default') }}</p>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-cancel" id="modalCancel">{{ __('menu.cancel') }}</button>
+            <button type="button" class="btn btn-confirm" id="modalConfirm">{{ __('menu.confirm') }}</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>

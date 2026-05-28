@@ -67,7 +67,8 @@ services:
         value: log
     preDeployCommand: php artisan migrate --force
 
-  - type: psql
+  - type: database
     name: library-db
+    runtime: postgres
     plan: free
     databaseName: library_db

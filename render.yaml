@@ -7,7 +7,7 @@ services:
       composer install --no-dev --optimize-autoloader
       npm install
       npm run build
-      php artisan storage:link
+      php artisan storage:link --force
       php artisan config:cache
       php artisan route:cache
       php artisan view:cache
@@ -20,7 +20,7 @@ services:
       - key: APP_KEY
         generateValue: true
       - key: APP_URL
-        value: https://library-management-system.onrender.com
+        sync: false
       - key: APP_LOCALE
         value: en
       - key: APP_FALLBACK_LOCALE
@@ -34,27 +34,19 @@ services:
       - key: LOG_LEVEL
         value: error
       - key: DB_CONNECTION
-        value: pgsql
+        value: mysql
       - key: DB_HOST
-        fromDatabase:
-          name: library-db
-          property: host
+        sync: false
       - key: DB_PORT
-        fromDatabase:
-          name: library-db
-          property: port
+        value: "3306"
       - key: DB_DATABASE
-        fromDatabase:
-          name: library-db
-          property: database
+        sync: false
       - key: DB_USERNAME
-        fromDatabase:
-          name: library-db
-          property: user
+        sync: false
       - key: DB_PASSWORD
-        fromDatabase:
-          name: library-db
-          property: password
+        sync: false
+      - key: MYSQL_ATTR_SSL_VERIFY_SERVER_CERT
+        value: "false"
       - key: SESSION_DRIVER
         value: database
       - key: CACHE_STORE
@@ -65,10 +57,4 @@ services:
         value: local
       - key: MAIL_MAILER
         value: log
-    preDeployCommand: php artisan migrate --force
-
-  - type: database
-    name: library-db
-    runtime: postgres
-    plan: free
-    databaseName: library_db
+    preDeployCommand: php artisan migrate --force --seed

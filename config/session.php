@@ -169,7 +169,7 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    'secure' => env('SESSION_SECURE_COOKIE', true), // <-- បន្ថែម , true នៅត្រង់នេះ
 
     /*
     |--------------------------------------------------------------------------

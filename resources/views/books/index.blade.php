@@ -200,8 +200,8 @@ $facultyShort = [
                         
                         <td>
                             @if($book->cover_image)
-                                <img src="{{ asset('storage/' . $book->cover_image) }}" 
-                                     alt="{{ $book->title }}" 
+                                <img src="{{ asset('storage/' . $book->cover_image) }}"
+                                     alt="{{ $book->title }}"
                                      style="width: 45px; height: 60px; object-fit: cover; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.15);">
                             @else
                                 <div style="width: 45px; height: 60px; background-color: #f3f4f6; border: 1px dashed #d1d5db; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-direction: column; color: #9ca3af; font-size: 9px; font-weight: bold; line-height: 1;">

@@ -1,0 +1,4 @@
+/* Minimal overrides for dashboard charts */
+#borrowChart { max-height: 280px; }
+#categoryChart { max-height: 280px; }
+.donut-container { display: flex; justify-content: center; }
